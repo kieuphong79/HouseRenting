@@ -4,10 +4,7 @@ import java.io.IOException;
 
 import com.uet.view.BaseView;
 
-import atlantafx.base.theme.PrimerLight;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
