@@ -11,5 +11,7 @@ public class Address {
         this.district = district;
         this.street = street;
     }
-    
+    public String toString() {
+        return address + ", " + street + ", " + district + ", " + city;
+    }
 }

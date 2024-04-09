@@ -7,9 +7,12 @@ import org.kordamp.ikonli.material2.Material2MZ;
 
 import com.uet.App;
 import com.uet.viewmodel.BaseViewModel;
+import com.uet.viewmodel.HouseViewModel;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
@@ -34,26 +37,43 @@ public class BaseView extends StackPane {
     //     } 
     //     return singleton;
     // }
+    //changeable components
+    private Text curCategoryText;
+
     private VBox baseContainer ;
     private BaseViewModel baseViewModel;
     private MenuView menuView; 
+    private StringProperty curCartegory;
     public BaseView() {
         //initialize
         super();
-        baseViewModel = new BaseViewModel();
+        baseViewModel = new BaseViewModel("HouseView");
         menuView = new MenuView();
-       
+       curCartegory = new SimpleStringProperty("");
+        // todo: listen to change content
+        curCartegory.addListener((obs, old, neww) -> {
+            if (old.equals(neww)) return;
+            if (neww.equals("Search")) {
+                curCategoryText.setText(curCartegory.get());
+            }
+            else if (neww.equals("HouseView")) {
+                setContent(new HouseView());
+                curCategoryText.setText(curCartegory.get());
+            }
+        });
+
         //LeftHeader        
         HBox leftHeader = getLeftHeader();
 
         Button menuButton = getMenuButton();
 
         //todo: thay doi theo lua chon cua menu
-        Text curCategory = new Text("Search");
-        curCategory.getStyleClass().addAll(Styles.TITLE_4, Styles.TEXT_NORMAL);
+        System.out.println(curCartegory.get());
+        curCategoryText = new Text(curCartegory.get());
+        curCategoryText.getStyleClass().addAll(Styles.TITLE_4, Styles.TEXT_NORMAL);
         
         ImageView imageView = getLogoImage();
-        leftHeader.getChildren().addAll(menuButton, imageView, curCategory);
+        leftHeader.getChildren().addAll(menuButton, imageView, curCategoryText);
         //rightHeader
         HBox rightHeader = getRightHeader();
 
@@ -69,8 +89,6 @@ public class BaseView extends StackPane {
         StackPane.setAlignment(headerContainer, Pos.TOP_CENTER);
         this.setMinSize(800, 600);
         
-        //binding
-        baseViewModel.curCategortStringProperty().bind(curCategory.textProperty());
         //event handler
         menuButton.setOnAction(
             (e) -> {
@@ -80,7 +98,9 @@ public class BaseView extends StackPane {
             }
         );  
         
-        setContent(new HouseView());
+        //binding
+        // baseViewModel.curCategortStringProperty().bind(curCartegory);
+        curCartegory.bind(baseViewModel.curCategortStringProperty());
     }
     private Separator getHeaderSeparator() {
         Separator headerSeparator = new Separator();
@@ -128,6 +148,7 @@ public class BaseView extends StackPane {
         logoIcon.setIconSize(30);
         return leftHeader;
     }
+
     
     public void setContent(Node node) {
         int sizeChildern = baseContainer.getChildren().size();
@@ -138,5 +159,7 @@ public class BaseView extends StackPane {
             baseContainer.getChildren().add(node);
         } else throw new RuntimeException("baseConatiner kich co khong phu hop");
     }
+    public BaseViewModel getBaseViewModel() {return baseViewModel;}
+    
 }
 

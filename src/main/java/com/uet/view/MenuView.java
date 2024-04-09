@@ -5,6 +5,7 @@ import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
 
 import com.uet.App;
+import com.uet.viewmodel.BaseViewModel;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
@@ -24,37 +25,36 @@ import javafx.scene.layout.VBox;
 public class MenuView extends ModalPane{
    private VBox mainContainer;
    public MenuView() {
-        super();
-        ImageView logoImg = new ImageView(App.class.getResource("logo.png").toString());
-        logoImg.setFitHeight(100);
-        logoImg.setFitWidth(100);
+      super();
+      ImageView logoImg = new ImageView(App.class.getResource("logo.png").toString());
+      logoImg.setFitHeight(100);
+      logoImg.setFitWidth(100);
 
-        Button closeButton = getCloseButton();
-        HBox closeWrapper = new HBox(closeButton);
-      //   closeWrapper.setPadding(new Insets(10, 10, 0, 0));
-        HBox.setHgrow(closeWrapper, Priority.ALWAYS);
-        closeWrapper.setAlignment(Pos.TOP_RIGHT);
+      Button closeButton = getCloseButton();
+      HBox closeWrapper = new HBox(closeButton);
+   //   closeWrapper.setPadding(new Insets(10, 10, 0, 0));
+      HBox.setHgrow(closeWrapper, Priority.ALWAYS);
+      closeWrapper.setAlignment(Pos.TOP_RIGHT);
 
+      HBox headerContainer = new HBox();
+   //   headerContainer.setPadding(new Insets(5, 5, 10, 5));
+      headerContainer.getChildren().addAll(logoImg, closeWrapper);
+      
+      Label searchCate = getSearchCate();
+      HBox searchWrapper = getSearchWrapper(searchCate);
+      //modify
+      mainContainer = new VBox();
+      mainContainer.getChildren().addAll(headerContainer, searchWrapper);
+      mainContainer.setMaxWidth(300); 
+      mainContainer.setPadding(new Insets(10, 10, 10, 10));
+   //   DropShadow shadow = new DropShadow();
+   //   shadow.setSpread(0.15);
 
-        HBox headerContainer = new HBox();
-      //   headerContainer.setPadding(new Insets(5, 5, 10, 5));
-        headerContainer.getChildren().addAll(logoImg, closeWrapper);
-        
-         Label searchCate = getSearchCate();
-         HBox searchWrapper = getSearchWrapper(searchCate);
-         //modify
-         mainContainer = new VBox();
-        mainContainer.getChildren().addAll(headerContainer, searchWrapper);
-        mainContainer.setMaxWidth(300); 
-        mainContainer.setPadding(new Insets(10, 10, 10, 10));
-      //   DropShadow shadow = new DropShadow();
-      //   shadow.setSpread(0.15);
-
-      //   mainContainer.setEffect(shadow);
-        mainContainer.setStyle("-fx-background-color:-color-base-0;-fx-background-radius: 0 10 10 0;");
-        //modal pane modify
-        this.setAlignment(Pos.CENTER_LEFT);
-        this.usePredefinedTransitionFactories(Side.LEFT);
+   //   mainContainer.setEffect(shadow);
+      mainContainer.setStyle("-fx-background-color:-color-base-0;-fx-background-radius: 0 10 10 0;");
+      //modal pane modify
+      this.setAlignment(Pos.CENTER_LEFT);
+      this.usePredefinedTransitionFactories(Side.LEFT);
    }
    public void show() {
       this.show(mainContainer);
@@ -81,6 +81,9 @@ public class MenuView extends ModalPane{
          e.consume();
       });
       searchWrapper.setOnMouseClicked((e) -> {
+         //todo: nhac 
+          BaseViewModel temp = ((BaseView) this.getParent()).getBaseViewModel();
+          temp.curCategortStringProperty().set("Search");
           close();
           e.consume();
       });
@@ -101,8 +104,6 @@ public class MenuView extends ModalPane{
       return closeButton;
    }
    private void close() {
-      System.out.println(this.isDisplay());
-      System.out.println(this.getContent());
       this.hide();
    }
       
