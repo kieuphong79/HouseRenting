@@ -1,7 +1,15 @@
 package com.uet.model;
 
 public enum HouseType {
-    HOUSE_LAND, APARTMENT, BEDSIT;
+    HOUSE_LAND("Nhà nguyên căn"), APARTMENT("Chung cư"), BEDSIT("Nhà trọ");
+    private final String name;
+    private HouseType(String name) {
+        this.name = name;
+    }
+    public String toString() {
+        return name;
+    }
+
     public static HouseType convert(String type) {
         if (type.equals("APARTMENT")) return APARTMENT;
         else if (type.equals("BEDSIT")) return BEDSIT;

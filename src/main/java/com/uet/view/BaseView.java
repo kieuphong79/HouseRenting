@@ -47,7 +47,7 @@ public class BaseView extends StackPane {
     public BaseView() {
         //initialize
         super();
-        baseViewModel = new BaseViewModel("HouseView");
+        baseViewModel = new BaseViewModel("Search");
         menuView = new MenuView();
        curCartegory = new SimpleStringProperty("");
         // todo: listen to change content
@@ -55,6 +55,8 @@ public class BaseView extends StackPane {
             if (old.equals(neww)) return;
             if (neww.equals("Search")) {
                 curCategoryText.setText(curCartegory.get());
+                baseContainer.getChildren().addAll(new SearchBar(), new SearchView());
+                // setContent(new SearchView());
             }
             else if (neww.equals("HouseView")) {
                 setContent(new HouseView());
