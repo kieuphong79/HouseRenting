@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 16, 2024 lúc 06:44 AM
+-- Thời gian đã tạo: Th4 16, 2024 lúc 08:37 AM
 -- Phiên bản máy phục vụ: 10.4.28-MariaDB
 -- Phiên bản PHP: 8.2.4
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `houserenting`
+-- Cơ sở dữ liệu: `db_houserenting`
 --
 
 -- --------------------------------------------------------
@@ -41,7 +41,7 @@ CREATE TABLE `chat` (
 --
 
 CREATE TABLE `nguoidung` (
-  `username` varchar(50) NOT NULL,
+  `username` int(11) NOT NULL,
   `sdt` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -133,32 +133,32 @@ ALTER TABLE `yeucau`
   ADD PRIMARY KEY (`id`);
 
 --
--- Các ràng buộc cho các bảng đã đổ
+-- AUTO_INCREMENT cho các bảng đã đổ
 --
 
 --
--- Các ràng buộc cho bảng `chat`
+-- AUTO_INCREMENT cho bảng `nguoidung`
 --
-ALTER TABLE `chat`
-  ADD CONSTRAINT `chat_ibfk_1` FOREIGN KEY (`id`) REFERENCES `nha` (`id`);
+ALTER TABLE `nguoidung`
+  MODIFY `username` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
--- Các ràng buộc cho bảng `nha`
+-- AUTO_INCREMENT cho bảng `nha`
 --
 ALTER TABLE `nha`
-  ADD CONSTRAINT `nha_ibfk_1` FOREIGN KEY (`id`) REFERENCES `yeucau` (`id`);
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
--- Các ràng buộc cho bảng `thich`
+-- AUTO_INCREMENT cho bảng `thich`
 --
 ALTER TABLE `thich`
-  ADD CONSTRAINT `thich_ibfk_1` FOREIGN KEY (`id`) REFERENCES `nha` (`id`);
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
--- Các ràng buộc cho bảng `yeucau`
+-- AUTO_INCREMENT cho bảng `yeucau`
 --
 ALTER TABLE `yeucau`
-  ADD CONSTRAINT `yeucau_ibfk_1` FOREIGN KEY (`id`) REFERENCES `nha` (`id`);
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
