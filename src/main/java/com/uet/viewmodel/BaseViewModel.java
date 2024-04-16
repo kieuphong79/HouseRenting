@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class BaseViewModel {
-    private StringProperty curCategory;
+    private SimpleStringProperty curCategory;
     public BaseViewModel(String defaultView) {
         curCategory = new SimpleStringProperty(defaultView);
     }

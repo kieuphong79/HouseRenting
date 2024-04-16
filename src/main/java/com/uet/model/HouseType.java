@@ -1,7 +1,7 @@
 package com.uet.model;
 
 public enum HouseType {
-    HOUSE_LAND("Nhà nguyên căn"), APARTMENT("Chung cư"), BEDSIT("Nhà trọ");
+    HOUSE_LAND("Nhà nguyên căn"), APARTMENT("Chung cư"), BEDSIT("Nhà trọ"), ALL("Tất cả");
     private final String name;
     private HouseType(String name) {
         this.name = name;

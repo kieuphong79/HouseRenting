@@ -84,7 +84,7 @@ public class HouseView extends ScrollPane{
         , new Separator());
         VBox right = new VBox(new Separator(), creatFeature(new FontIcon(Material2AL.ATTACH_MONEY), "Mức giá", curHouse.getPriceAsString()) 
         , new Separator(), creatFeature(new FontIcon(Material2AL.KITCHEN), "Số phòng bếp", String.valueOf(curHouse.getNumKitchens()) + " phòng")
-        , new Separator(), creatFeature(new FontIcon(Material2OutlinedAL.HOME), "Loại hình", curHouse.getTypeAsString()), new Separator());
+        , new Separator(), creatFeature(new FontIcon(Material2OutlinedAL.HOME), "Loại hình", curHouse.getHouseType().toString()), new Separator());
         HBox detailFeature = new HBox(left, right);
         detailFeature.setSpacing(30);
         

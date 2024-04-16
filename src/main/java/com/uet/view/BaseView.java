@@ -49,7 +49,7 @@ public class BaseView extends StackPane {
         super();
         baseViewModel = new BaseViewModel("Search");
         menuView = new MenuView();
-       curCartegory = new SimpleStringProperty("");
+       curCartegory = new SimpleStringProperty("để cho có");
         // todo: listen to change content
         curCartegory.addListener((obs, old, neww) -> {
             if (old.equals(neww)) return;
@@ -61,6 +61,7 @@ public class BaseView extends StackPane {
             else if (neww.equals("HouseView")) {
                 setContent(new HouseView());
                 curCategoryText.setText(curCartegory.get());
+                
             }
         });
 
@@ -70,7 +71,6 @@ public class BaseView extends StackPane {
         Button menuButton = getMenuButton();
 
         //todo: thay doi theo lua chon cua menu
-        System.out.println(curCartegory.get());
         curCategoryText = new Text(curCartegory.get());
         curCategoryText.getStyleClass().addAll(Styles.TITLE_4, Styles.TEXT_NORMAL);
         
@@ -102,7 +102,7 @@ public class BaseView extends StackPane {
         
         //binding
         // baseViewModel.curCategortStringProperty().bind(curCartegory);
-        curCartegory.bind(baseViewModel.curCategortStringProperty());
+        curCartegory.bindBidirectional(baseViewModel.curCategortStringProperty());
     }
     private Separator getHeaderSeparator() {
         Separator headerSeparator = new Separator();

@@ -106,12 +106,6 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
         this.imagesUrl = imagesUrl.split(",");
         this.houseType = houseType;
     }
-    public String getTypeAsString() {
-        if (houseType == HouseType.APARTMENT) return "Chung cư";
-        else if (houseType == HouseType.HOUSE_LAND) return "Nhà nguyên căn";
-        else if (houseType == HouseType.BEDSIT) return "Phòng trọ";
-        throw new RuntimeException("Loi loai nha");
-    }
     
     
 

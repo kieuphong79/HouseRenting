@@ -10,6 +10,16 @@
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
     <dependencies>
+    <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>
+</dependency>
+
+
+
+
     <dependency>
     <groupId>org.kordamp.ikonli</groupId>
     <artifactId>ikonli-material2-pack</artifactId>
@@ -36,11 +46,7 @@
             <version>2.0.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
-        <dependency>
-            <groupId>org.controlsfx</groupId>
-            <artifactId>controlsfx</artifactId>
-            <version>11.2.1</version>
-        </dependency>
+        
 
     </dependencies>
     <build>
