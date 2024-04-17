@@ -4,11 +4,17 @@ package com.uet.view;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
+import org.kordamp.ikonli.material2.Material2OutlinedAL;
+import org.kordamp.ikonli.material2.Material2OutlinedMZ;
 
 import com.uet.App;
 import com.uet.viewmodel.BaseViewModel;
 
+import atlantafx.base.controls.Message;
+import atlantafx.base.controls.Notification;
 import atlantafx.base.theme.Styles;
+import atlantafx.base.util.Animations;
+import javafx.animation.Animation;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
@@ -28,13 +34,13 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class BaseView extends StackPane {
-    // private static BaseView singleton;
-    // public static BaseView getInstance() {
-    //     if (singleton == null) {
-    //         singleton = new BaseView();
-    //     } 
-    //     return singleton;
-    // }
+    private static BaseView singleton;
+    public static BaseView getInstance() {
+        if (singleton == null) {
+            singleton = new BaseView();
+        } 
+        return singleton;
+    }
     //changeable components
     private Text curCategoryText;
 
@@ -42,6 +48,7 @@ public class BaseView extends StackPane {
     private BaseViewModel baseViewModel;
     private MenuView menuView; 
     private StringProperty curCartegory;
+    private ProgressBar progressBar;
     public BaseView() {
         //initialize
         super();
@@ -78,25 +85,9 @@ public class BaseView extends StackPane {
         HBox rightHeader = getRightHeader();
 
         //processbar 
-        ProgressBar progressBar = new ProgressBar(0); 
+        progressBar = new ProgressBar(0); 
         progressBar.setMaxWidth(2000);
         progressBar.getStyleClass().addAll(Styles.SMALL);
-        Task<Void> task = new Task<Void>() {
-            protected Void call() throws Exception {
-                for (int i = 0; i < 1000; i++) {
-                    Thread.sleep(10);
-                    // updateProgress(i, 1000);
-                }
-                return null;
-            }
-        };
-        task.setOnSucceeded((e) -> {
-            progressBar.progressProperty().unbind();
-            progressBar.setProgress(0);
-            progressBar.setVisible(false);
-        });
-        progressBar.progressProperty().bind(task.progressProperty());
-        new Thread(task).start();
 
 
         //Header Container
@@ -182,6 +173,41 @@ public class BaseView extends StackPane {
         } else throw new RuntimeException("baseConatiner kich co khong phu hop");
     }
     public BaseViewModel getBaseViewModel() {return baseViewModel;}
+    
+    public void createMessage(String type, String message) {
+        final Message mes = new Message();
+        mes.setDescription(message);
+        mes.setTitle(type);;
+        if (type.equals("Info")) {
+            mes.setGraphic(new FontIcon(Material2OutlinedAL.HELP_OUTLINE));
+            mes.getStyleClass().addAll(Styles.ACCENT);
+        } else if (type.equals("Success")) {
+            mes.setGraphic(new FontIcon(Material2OutlinedAL.CHECK_CIRCLE_OUTLINE));
+            mes.getStyleClass().addAll(Styles.SUCCESS);
+        } else if (type.equals("Warning")) {
+            mes.setGraphic(new FontIcon(Material2OutlinedMZ.OUTLINED_FLAG));
+            mes.getStyleClass().addAll(Styles.WARNING);
+        } else if (type.equals("Danger")) {
+            mes.setGraphic(new FontIcon(Material2OutlinedAL.ERROR_OUTLINE));
+            mes.getStyleClass().addAll(Styles.DANGER);
+        } else {
+            mes.setGraphic(new FontIcon(Material2OutlinedAL.CHAT_BUBBLE_OUTLINE));
+        }
+
+        mes.setPrefSize(400, 50);
+        mes.setMaxSize(USE_PREF_SIZE, USE_PREF_SIZE); 
+        mes.setOnClose(e -> {
+            var out = Animations.slideOutUp(mes, Duration.millis(250));
+            out.setOnFinished(e1 -> getChildren().remove(mes));
+            out.playFromStart();
+        });
+        var in = Animations.slideInDown(mes, Duration.millis(250));
+        getChildren().add(mes);
+        in.playFromStart();
+        StackPane.setAlignment(mes, Pos.TOP_RIGHT);
+        StackPane.setMargin(mes, new Insets(10, 10, 0, 0));
+    
+    }
     
 }
 

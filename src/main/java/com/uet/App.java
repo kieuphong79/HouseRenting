@@ -16,10 +16,11 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         Application.setUserAgentStylesheet(App.class.getResource("primer-light.css").toString());
-        Scene scene = new Scene(new BaseView());
+        Scene scene = new Scene(BaseView.getInstance());
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();
+        
     }
 
 
