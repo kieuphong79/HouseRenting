@@ -12,9 +12,7 @@ import com.uet.model.DataStatement;
 import com.uet.model.HouseType;
 import com.uet.model.MysqlConnector;
 
-import javafx.beans.property.FloatProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

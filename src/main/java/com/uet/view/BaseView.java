@@ -7,20 +7,17 @@ import org.kordamp.ikonli.material2.Material2MZ;
 
 import com.uet.App;
 import com.uet.viewmodel.BaseViewModel;
-import com.uet.viewmodel.HouseViewModel;
 
-import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Side;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -28,6 +25,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class BaseView extends StackPane {
     // private static BaseView singleton;
@@ -79,12 +77,34 @@ public class BaseView extends StackPane {
         //rightHeader
         HBox rightHeader = getRightHeader();
 
+        //processbar 
+        ProgressBar progressBar = new ProgressBar(0); 
+        progressBar.setMaxWidth(2000);
+        progressBar.getStyleClass().addAll(Styles.SMALL);
+        Task<Void> task = new Task<Void>() {
+            protected Void call() throws Exception {
+                for (int i = 0; i < 1000; i++) {
+                    Thread.sleep(10);
+                    // updateProgress(i, 1000);
+                }
+                return null;
+            }
+        };
+        task.setOnSucceeded((e) -> {
+            progressBar.progressProperty().unbind();
+            progressBar.setProgress(0);
+            progressBar.setVisible(false);
+        });
+        progressBar.progressProperty().bind(task.progressProperty());
+        new Thread(task).start();
+
+
         //Header Container
         HBox headerContainer = getHeaderContainer(leftHeader, rightHeader);
 
         Separator headerSeparator = getHeaderSeparator();
         
-        baseContainer = new VBox(headerContainer, headerSeparator);
+        baseContainer = new VBox(headerContainer, headerSeparator, progressBar);
         // baseContainer.setStyle("-fx-background-color: blue;");
         this.getChildren().addAll(menuView, baseContainer);
         

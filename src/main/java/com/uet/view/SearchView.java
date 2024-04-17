@@ -18,30 +18,7 @@ public class SearchView extends ScrollPane {
     
     public SearchView() {
         super();
-        // TextField searchField = new TextField();
-        // searchField.setPadding(new Insets(0, 30, 0, 30));
-        // searchField.setPrefHeight(40);
-
-        // Button deleteButton = new Button();
-        // FontIcon deleteIcon = new FontIcon(Material2AL.CLOSE);
-        // deleteIcon.setIconSize(20);
-        // deleteButton.setGraphic(deleteIcon);
-        // deleteButton.getStyleClass().addAll(Styles.FLAT, Styles.ROUNDED);
-        // StackPane.setAlignment(deleteButton, Pos.CENTER_RIGHT);
-
-
-        // searchField.getStyleClass().addAll(Styles.LARGE, Styles.ROUNDED);
-        // StackPane searchStackPane = new StackPane();
-        // FontIcon searchIcon = new FontIcon(Material2MZ.SEARCH);
-        // searchIcon.setIconSize(20);
-        // StackPane.setAlignment(searchIcon, Pos.CENTER_LEFT);
-        // StackPane.setMargin(searchIcon, new Insets(0, 0, 0, 10));
-
-        // searchStackPane.getChildren().addAll(searchField, searchIcon, deleteButton);
-        
-        // HBox searchContainer = new HBox(searchStackPane);
-        // VBox contentContainer = new VBox(searchContainer);
-        // this.setContent(contentContainer);
+        VBox container = new VBox();
 
     }
 }

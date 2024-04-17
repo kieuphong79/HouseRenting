@@ -270,6 +270,9 @@ public class SearchBar extends HBox{
         FontIcon searchIcon1 = new FontIcon(Material2MZ.SEARCH);
         searchIcon1.setIconSize(20);
         searchButton.setGraphic(searchIcon1);
+        searchButton.setOnAction(e -> {
+            
+        });
         
         Button resetButton = new Button();
         resetButton.getStyleClass().addAll(Styles.BUTTON_ICON, Styles.DANGER);

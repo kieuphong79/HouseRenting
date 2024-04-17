@@ -104,7 +104,7 @@ public class MenuView extends ModalPane{
       return closeButton;
    }
    private void close() {
-      this.hide();
+      this.hide(); 
    }
       
 }
