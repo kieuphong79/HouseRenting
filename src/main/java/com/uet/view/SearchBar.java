@@ -1,20 +1,16 @@
 package com.uet.view;
 
 
-import java.util.List;
 
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
 
-import com.uet.model.House;
 import com.uet.model.HouseType;
 import com.uet.viewmodel.SearchBarViewModel;
-import com.uet.viewmodel.SearchViewModel;
 
 import atlantafx.base.controls.CustomTextField;
 import atlantafx.base.theme.Styles;
-import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;

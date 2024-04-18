@@ -7,12 +7,15 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.mysql.cj.conf.BooleanProperty;
 import com.uet.model.AddressProperty;
 import com.uet.model.DataStatement;
 import com.uet.model.House;
 import com.uet.model.HouseType;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -27,9 +30,15 @@ public class SearchBarViewModel {
     private StringProperty upperBoundAreaProperty;
     private StringProperty numOfBedrooms;
     
-    private ObjectProperty<List<House>> houses;
+    private List<House> houses;
+    private SimpleBooleanProperty housesChanged;
+
+    public List<House> getHouses() {return houses;}
+    public SimpleBooleanProperty houseChangedProperty() {return housesChanged;}
+    
     
     public SearchBarViewModel() {
+        housesChanged = new SimpleBooleanProperty(false);
         keyWordProperty = new SimpleStringProperty("");
         upperBoundPrice = new SimpleStringProperty("");
         lowerBoundPrice = new SimpleStringProperty("");
@@ -38,7 +47,8 @@ public class SearchBarViewModel {
         lowerBoundAreaProperty = new SimpleStringProperty("");
         upperBoundAreaProperty = new SimpleStringProperty("");
         numOfBedrooms = new SimpleStringProperty("Tất cả");
-        houses = new SimpleObjectProperty<>();
+        houses = new LinkedList<>();
+
     }
 
     public void reset() {
@@ -163,10 +173,10 @@ public class SearchBarViewModel {
      * Output: list các nhà lưu tạm vào thuộc tính trong class (tự tạo) 
      */
     public void search(int limit, int offset) {
-        DataStatement<List<House>> st = new DataStatement<List<House>>() {
+        houses.clear();
+        DataStatement<Void> st = new DataStatement<Void>() {
             @Override
-            protected List<House> call() {
-                List<House> res = new LinkedList<>();
+            protected Void call() {
                 
                 boolean hasKeyword = false;
                 
@@ -265,12 +275,12 @@ public class SearchBarViewModel {
                     int count = 0;
                     ResultSet resultSet = pst.executeQuery();
                     while (resultSet.next()) {
-                        res.add(House.getHouseFromResultSet(resultSet));
+                        houses.add(House.getHouseFromResultSet(resultSet));
                         count++;
                         updateProgress(count, limit);
                     }
-                    houses.set(res);
-                    return res;
+                    System.out.println("done thread for search");
+                    return null;
                 
                 } catch (SQLException e) {
                     throw new RuntimeException("Không kết nối được với database(truy vấn)");
@@ -278,6 +288,9 @@ public class SearchBarViewModel {
             }
         };
         System.out.println("start trhea");
+        st.setOnSucceeded(e -> {
+            housesChanged.set(true);
+        });
         st.startInThread();
         // st.execute();
         return;
