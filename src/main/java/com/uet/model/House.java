@@ -1,10 +1,40 @@
 package com.uet.model;
-
+// lic House(int id, String userName, String title, int price, String descirption, Address specAddress, int numBedrooms,
+//             int numKitchens, int numToilets, float area, String imagesUrl, HouseType houseType, int isPublic, Date date) {
+import java.sql.Date;
+import java.sql.ResultSet;
 
 public class House {
-    public static House sample = new House(2197, "Cho thuê nhà BT 80 m2 trên nền đất 215 m2, đường Phùng Khoang",1000000,  "Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202Số điện thoại: 0913593202",
-     null, new Address("Đường Phùng Khoang", "Thành Phố Hà Nội", "Quận Nam Từ Liêm", "Phường Trung Văn"), 1, 1, 1, null, null, null, 10.0f, "https://cloud.muaban.net/images/thumb-detail/2024/03/14/473/fb9af1eb0ef04509ae33a9d02e83c2b9.jpg,https://cloud.muaban.net/images/thumb-detail/2024/03/14/473/29ca5e562f094b80bc91db99bb66b014.jpg,https://cloud.muaban.net/images/thumb-detail/2024/03/14/473/8cbcf60d174e42fba883c8e5c8d88bd8.jpg,https://cloud.muaban.net/images/thumb-detail/2024/03/14/473/48458f8d37b04df8a2eb36041bdd502f.jpg,https://cloud.muaban.net/images/thumb-detail/2024/03/14/473/87441328b3ee425d9f48dd1358237abc.jpg,https://cloud.muaban.net/images/thumb-detail/2024/03/14/472/efaba9991eac47f9974f0cc4588ab710.jpg,https://cloud.muaban.net/images/thumb-detail/2024/03/14/471/235efa8b1fb34b63879f31ff390a75af.jpg,https://cloud.muaban.net/images/thumb-detail/2024/03/14/472/c55f7e423ffc4064a103b3263ce087f6.jpg,https://cloud.muaban.net/images/thumb-detail/2024/03/14/472/0325f8f52f654fcbabc91317d1640801.jpg"
-, HouseType.HOUSE_LAND );
+    public static House getHouseFromResultSet(ResultSet rs) {
+        try {
+            int id = rs.getInt("id");
+            String username = rs.getString("username");
+            String title = rs.getString("title");
+            int price = rs.getInt("price");
+            String description = rs.getString("description");
+            String address = rs.getString("address");
+            String city = rs.getString("city");
+            String district = rs.getString("district");
+            String street = rs.getString("street");
+            int numberOfBedrooms = rs.getInt("numberOfBedrooms");
+            int numberOfKitchens = rs.getInt("numberOfKitchens");
+            int numberOfToilets = rs.getInt("numberOfToilets");
+            float area = rs.getFloat("area");
+            String imagesURL = rs.getString("imagesURL");
+            String houseType = rs.getString("houseType");
+            HouseType actualHouseType = null;
+            if (houseType.equals("BEDSIT")) actualHouseType = HouseType.BEDSIT;
+            else if (houseType.equals("APARTEMENT")) actualHouseType = HouseType.APARTMENT;
+            else if (houseType.equals("HOUSE_LAND")) actualHouseType = HouseType.HOUSE_LAND;
+            int isPublic = rs.getInt("isPublic");
+            Date requiringDate = rs.getDate("requiringDate");
+            return new House(id, username, title, price, description, new Address(address, city, district, street), numberOfBedrooms,
+                numberOfKitchens, numberOfToilets, area, imagesURL, actualHouseType, isPublic, requiringDate);
+        } catch(Exception e) {
+            throw new RuntimeException("Không thể kết nối đến database(tạo nhà)");
+        }
+
+    }
    /*id : "2198"
 title : "Cho thuê nhà BT 80 m2 trên nền đất 215 m2, đường Phùng Khoang"
 price : "10000000"
@@ -40,9 +70,6 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
     public String getDescirption() {
         return descirption;
     }
-    public String getName() {
-        return name;
-    }
     public Address getSpecAddress() {
         return specAddress;
     }
@@ -55,15 +82,6 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
     public int getNumToilets() {
         return numToilets;
     }
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-    public String getToiletDescription() {
-        return toiletDescription;
-    }
-    public String getKitchenDescription() {
-        return kitchenDescription;
-    }
     public float getArea() {
         return area;
     }
@@ -74,37 +92,34 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
         return houseType;
     }
     private String title;
-    private float price;
+    private String userName;
+    private int price;
     private String descirption;
-    private String name;
     private Address specAddress;
     private int numBedrooms;
     private int numKitchens;
     private int numToilets;
-    private String phoneNumber;
-    private String toiletDescription;
-    private String kitchenDescription;
     private float area;
     private String[] imagesUrl;
     private HouseType houseType;
-    public House(int id, String title, float price, String descirption, String name, Address specAddress, int numBedrooms,
-            int numKitchens, int numToilets, String phoneNumber, String toiletDescription, String kitchenDescription,
-            float area, String imagesUrl, HouseType houseType) {
+    private int isPublic;
+    private Date date;
+    public House(int id, String userName, String title, int price, String descirption, Address specAddress, int numBedrooms,
+            int numKitchens, int numToilets, float area, String imagesUrl, HouseType houseType, int isPublic, Date date) {
         this.id = id;
+        this.userName = userName;
         this.title = title;
         this.price = price;
         this.descirption = descirption;
-        this.name = name;
         this.specAddress = specAddress;
         this.numBedrooms = numBedrooms;
         this.numKitchens = numKitchens;
         this.numToilets = numToilets;
-        this.phoneNumber = phoneNumber;
-        this.toiletDescription = toiletDescription;
-        this.kitchenDescription = kitchenDescription;
         this.area = area;
         this.imagesUrl = imagesUrl.split(",");
         this.houseType = houseType;
+        this.isPublic = isPublic;
+        this.date = date;
     }
     
     

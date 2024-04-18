@@ -1,15 +1,20 @@
 package com.uet.view;
 
 
+import java.util.List;
+
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
 
+import com.uet.model.House;
 import com.uet.model.HouseType;
 import com.uet.viewmodel.SearchBarViewModel;
+import com.uet.viewmodel.SearchViewModel;
 
 import atlantafx.base.controls.CustomTextField;
 import atlantafx.base.theme.Styles;
+import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -38,6 +43,7 @@ public class SearchBar extends HBox{
     private Label detailNumBedrooms;
     private TextField lowerBoundArea;
     private TextField upperBoundArea;
+
     public SearchBar() {
         super();
         
@@ -217,7 +223,7 @@ public class SearchBar extends HBox{
         
 
         ContextMenu numBedRoomContextMenu = new ContextMenu();
-        numBedRoomContextMenu.getItems().addAll(createNumBedroomsSample("1 phòng"), createNumBedroomsSample("2 phòng"), createNumBedroomsSample("3 phòng"), createNumBedroomsSample("4+ phòng"));
+        numBedRoomContextMenu.getItems().addAll(createNumBedroomsSample("1"), createNumBedroomsSample("2"), createNumBedroomsSample("3"), createNumBedroomsSample("4+"));
 
         numBedroomsChoiceContainer.setOnMouseClicked((e) -> {
             numBedRoomContextMenu.show(numBedroomsChoiceContainer, Side.BOTTOM, 0, 0);
@@ -271,7 +277,8 @@ public class SearchBar extends HBox{
         searchIcon1.setIconSize(20);
         searchButton.setGraphic(searchIcon1);
         searchButton.setOnAction(e -> {
-            
+            System.out.println("button searhc");
+            searchBarViewModel.search(10, 0);
         });
         
         Button resetButton = new Button();
@@ -311,6 +318,8 @@ public class SearchBar extends HBox{
         detailNumBedrooms.textProperty().bindBidirectional(searchBarViewModel.getNumOfBedrooms());
         lowerBoundArea.textProperty().bindBidirectional(searchBarViewModel.getLowerBoundAreaProperty());
         upperBoundArea.textProperty().bindBidirectional(searchBarViewModel.getUpperBoundAreaProperty());
+        detailNumBedrooms.textProperty().bindBidirectional(searchBarViewModel.getNumOfBedrooms());
+
         
         // event
         
@@ -437,10 +446,11 @@ public class SearchBar extends HBox{
     }
     private MenuItem createNumBedroomsSample(String s) {
         MenuItem res = new MenuItem();
-        res.setText(s);
+        res.setText(s + " phòng");
         res.setOnAction(e -> {
             detailNumBedrooms.setText(res.getText());
         });
         return res;
     }
+    public SearchBarViewModel getSearchBarViewModel() {return searchBarViewModel;}
 }   

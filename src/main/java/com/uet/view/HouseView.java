@@ -34,7 +34,7 @@ public class HouseView extends ScrollPane{
     public HouseView() {
         //Test 
         super();
-        curHouse = House.sample; 
+        // curHouse = House.sample; 
         //
         //initialize 
         houseViewModel = new HouseViewModel();

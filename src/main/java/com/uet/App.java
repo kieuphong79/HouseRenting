@@ -20,7 +20,6 @@ public class App extends Application {
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();
-        
     }
 
 

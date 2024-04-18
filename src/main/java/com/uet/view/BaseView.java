@@ -1,6 +1,7 @@
 package com.uet.view;
 
 
+
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
@@ -11,13 +12,12 @@ import com.uet.App;
 import com.uet.viewmodel.BaseViewModel;
 
 import atlantafx.base.controls.Message;
-import atlantafx.base.controls.Notification;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
-import javafx.animation.Animation;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.concurrent.Task;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -60,7 +60,8 @@ public class BaseView extends StackPane {
             if (old.equals(neww)) return;
             if (neww.equals("Search")) {
                 curCategoryText.setText(curCartegory.get());
-                baseContainer.getChildren().addAll(new SearchBar(), new SearchView());
+                SearchView searchView = new SearchView();
+                baseContainer.getChildren().addAll(searchView.getSearchBar(), searchView);
                 // setContent(new SearchView());
             }
             else if (neww.equals("HouseView")) {
@@ -88,8 +89,21 @@ public class BaseView extends StackPane {
         progressBar = new ProgressBar(0); 
         progressBar.setMaxWidth(2000);
         progressBar.getStyleClass().addAll(Styles.SMALL);
-
-
+        progressBar.setVisible(false);
+        EventHandler consumer = e -> e.consume();
+        progressBar.progressProperty().addListener((obs, old, neww) -> {
+            if ((double) old == 0) {
+                progressBar.setVisible(true);
+                //todo: only contentContainer is block
+                progressBar.getScene().addEventFilter(EventType.ROOT, consumer);
+            }
+            if ((double) neww == 1) {
+                progressBar.getScene().removeEventFilter(EventType.ROOT, consumer);;
+                progressBar.progressProperty().unbind();
+                progressBar.setVisible(false);
+                progressBar.setProgress(0);
+            }
+        });
         //Header Container
         HBox headerContainer = getHeaderContainer(leftHeader, rightHeader);
 
@@ -173,6 +187,7 @@ public class BaseView extends StackPane {
         } else throw new RuntimeException("baseConatiner kich co khong phu hop");
     }
     public BaseViewModel getBaseViewModel() {return baseViewModel;}
+    public ProgressBar getProgressBar() {return progressBar;}
     
     public void createMessage(String type, String message) {
         final Message mes = new Message();
