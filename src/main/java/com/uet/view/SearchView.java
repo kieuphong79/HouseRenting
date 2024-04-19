@@ -112,7 +112,7 @@ public class SearchView extends ScrollPane {
         var bigImage = new Image(link);
         if (bigImage.getWidth() * 3 < bigImage.getHeight() * 4) {
             var pr = bigImage.getPixelReader();
-            bigImage = new WritableImage(pr, 0, (int)(bigImage.getHeight() - (bigImage.getWidth()*3)/ 4 ), (int)bigImage.getWidth(), (int) ((bigImage.getWidth()*3)/ 4));
+            bigImage = new WritableImage(pr, 0, (int)(bigImage.getHeight() - (bigImage.getWidth()*3)/ 4 ) / 2, (int)bigImage.getWidth(), (int) ((bigImage.getWidth()*3)/ 4));
         } else if (bigImage.getWidth() * 3 > bigImage.getHeight() * 4) {
             var pr = bigImage.getPixelReader();
             bigImage = new WritableImage(pr, 0, 0, (int) (bigImage.getHeight() * 4 / 3), (int) bigImage.getHeight());
