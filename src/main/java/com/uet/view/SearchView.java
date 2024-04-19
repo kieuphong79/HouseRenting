@@ -1,8 +1,13 @@
 package com.uet.view;
 
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.LinkedList;
+=======
+import java.security.cert.PKIXBuilderParameters;
+import java.util.ArrayList;
+>>>>>>> testCrop
 import java.util.List;
 
 import com.uet.model.House;
@@ -16,6 +21,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -49,6 +56,7 @@ public class SearchView extends ScrollPane {
     public void update() {
         //todo: optomize load indicator 
         List<House> houses = searchBarViewModel.getHouses();
+<<<<<<< HEAD
         System.out.println(Thread.currentThread().getName() + " is updating");
         List<HBox> images = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -58,6 +66,16 @@ public class SearchView extends ScrollPane {
             container.getChildren().clear();
             container.getChildren().addAll(images);
         });
+=======
+        List<HBox> temp = new ArrayList<>();
+        for (int i = 0; i < houses.size(); i++) {
+            temp.add(createHouseOverview(houses.get(i)));
+        }
+        Platform.runLater(() -> {
+            container.getChildren().clear();
+            container.getChildren().addAll(temp);
+        }); 
+>>>>>>> testCrop
         System.out.println("update succesfully");
     }
     public HBox createHouseOverview(House house) {
@@ -75,12 +93,18 @@ public class SearchView extends ScrollPane {
         container.setSpacing(2);
 
         // Create the big image view
+<<<<<<< HEAD
         ImageView bigImageView = new ImageView(new Image(imageLinks[0]));
         if (isHorizontal(bigImageView.getImage())) {
             bigImageView.setFitWidth(315);
         } else {
             bigImageView.setFitHeight(236);
         }
+=======
+        ImageView bigImageView = new ImageView(createFitImage(imageLinks[0]));
+        
+        bigImageView.setFitWidth(315);
+>>>>>>> testCrop
         bigImageView.setPreserveRatio(true);
         HBox tempBig = new HBox(bigImageView);
         tempBig.setMinWidth(315);
@@ -101,10 +125,15 @@ public class SearchView extends ScrollPane {
         int columnIndex = 0;
         int rowIndex = 0;
         for (int i = 1; i < 4; i++) {
+<<<<<<< HEAD
             ImageView smallImageView = new ImageView(new Image(imageLinks[i]));
             if (isHorizontal(smallImageView.getImage())) {
                 smallImageView.setFitWidth(104);
             } else smallImageView.setFitHeight(78);
+=======
+            ImageView smallImageView = new ImageView(createFitImage(imageLinks[i]));
+            smallImageView.setFitWidth(104);
+>>>>>>> testCrop
             smallImageView.setPreserveRatio(true);
             HBox temp = new HBox(smallImageView);
             temp.setAlignment(Pos.CENTER);
@@ -126,7 +155,21 @@ public class SearchView extends ScrollPane {
 
         return container;
     }
+<<<<<<< HEAD
     private boolean isHorizontal(Image image) {
         return image.getWidth() > image.getHeight();
+=======
+    public Image createFitImage(String link) {
+        var bigImage = new Image(link);
+        if (bigImage.getWidth() * 3 < bigImage.getHeight() * 4) {
+            var pr = bigImage.getPixelReader();
+            bigImage = new WritableImage(pr, 0, (int)(bigImage.getHeight() - (bigImage.getWidth()*3)/ 4 ) / 2, (int)bigImage.getWidth(), (int) ((bigImage.getWidth()*3)/ 4));
+        } else if (bigImage.getWidth() * 3 > bigImage.getHeight() * 4) {
+            var pr = bigImage.getPixelReader();
+            bigImage = new WritableImage(pr, 0, 0, (int) (bigImage.getHeight() * 4 / 3), (int) bigImage.getHeight());
+        }
+        return bigImage;
+
+>>>>>>> testCrop
     }
 }
