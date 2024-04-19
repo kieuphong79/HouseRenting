@@ -280,6 +280,8 @@ public class SearchBarViewModel {
                         updateProgress(count, limit);
                     }
                     System.out.println("done thread for search");
+                    System.out.println(Thread.currentThread().getName() + " triggers housechange");
+                    housesChanged.set(true);
                     return null;
                 
                 } catch (SQLException e) {
@@ -287,10 +289,7 @@ public class SearchBarViewModel {
                 }
             }
         };
-        System.out.println("start trhea");
-        st.setOnSucceeded(e -> {
-            housesChanged.set(true);
-        });
+        System.out.println("start thread");
         st.startInThread();
         // st.execute();
         return;
