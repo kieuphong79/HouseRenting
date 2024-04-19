@@ -38,6 +38,6 @@ public abstract class DataStatement<T> extends Task<T> {
         Thread thread = new Thread(this);
         thread.setDaemon(true);
         thread.start();
-    }
+    }//dsada
 
 }
