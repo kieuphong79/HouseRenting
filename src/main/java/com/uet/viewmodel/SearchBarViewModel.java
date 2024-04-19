@@ -280,10 +280,6 @@ public class SearchBarViewModel {
                         updateProgress(count, limit);
                     }
                     System.out.println("done thread for search");
-<<<<<<< HEAD
-                    System.out.println(Thread.currentThread().getName() + " triggers housechange");
-=======
->>>>>>> testCrop
                     housesChanged.set(true);
                     return null;
                 
@@ -292,11 +288,7 @@ public class SearchBarViewModel {
                 }
             }
         };
-<<<<<<< HEAD
         System.out.println("start thread");
-=======
-        System.out.println("start trhea");
->>>>>>> testCrop
         st.startInThread();
         // st.execute();
         return;
