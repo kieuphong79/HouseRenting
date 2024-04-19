@@ -280,6 +280,7 @@ public class SearchBarViewModel {
                         updateProgress(count, limit);
                     }
                     System.out.println("done thread for search");
+                    housesChanged.set(true);
                     return null;
                 
                 } catch (SQLException e) {
@@ -288,9 +289,6 @@ public class SearchBarViewModel {
             }
         };
         System.out.println("start trhea");
-        st.setOnSucceeded(e -> {
-            housesChanged.set(true);
-        });
         st.startInThread();
         // st.execute();
         return;
