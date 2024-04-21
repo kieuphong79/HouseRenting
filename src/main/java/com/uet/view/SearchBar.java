@@ -123,6 +123,7 @@ public class SearchBar extends HBox{
         ChoiceBox<String> cityChoiceBox = new ChoiceBox<>();
         cityChoiceBox.getItems().add("Tất cả");
         cityChoiceBox.getItems().addAll(searchBarViewModel.getPossibleCity());
+        System.out.println(searchBarViewModel.houseChangedProperty().get());
         cityChoiceBox.getSelectionModel().selectFirst();
         cityChoiceBox.setPrefWidth(150);
         

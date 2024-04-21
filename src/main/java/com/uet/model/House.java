@@ -123,5 +123,6 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
     }
     
     
+    
 
 }

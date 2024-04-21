@@ -174,121 +174,129 @@ public class SearchBarViewModel {
      */
     public void search(int limit, int offset) {
         houses.clear();
+        housesChanged.set(false);
         DataStatement<Void> st = new DataStatement<Void>() {
             @Override
             protected Void call() {
-                
-                boolean hasKeyword = false;
-                
-                StringBuffer temp = new StringBuffer("select * from houses ");
-                boolean needAND = false;
-                if (!keyWordProperty.get().isEmpty())  {
-                    hasKeyword = true;
-                    temp.append("where ");
-                    temp.append("match(title, description) against (?) ");
-                    needAND = true;
-                }
-                if(typeOfHouse.get() != HouseType.ALL) {
-                    if (needAND) temp.append("and ");
-                    else temp.append("where ");
-                    needAND = true;
-                    if (typeOfHouse.get() == HouseType.HOUSE_LAND) {
-                        temp.append("houseType = 'HOUSE_LAND' ");
-                    } else if (typeOfHouse.get() == HouseType.BEDSIT) {
-                        temp.append("houseType = 'BEDSIT' ");
-                    } else if (typeOfHouse.get() == HouseType.APARTMENT) {
-                        temp.append("houseType = 'APARTMENT' ");
-                    }
-                }
-                if (!address.getCity().get().equals("Tất cả")) {
-                    if (needAND) temp.append("and ");
-                    else temp.append("where ");
-                    temp.append("city = '").append(address.getCity().get()).append("' ");
-                    needAND = true;
-                } 
-                if (!address.getDistrict().get().equals("Tất cả")) {
-                    if (needAND) temp.append("and ");
-                    else temp.append("where ");
-                    temp.append("district = '").append(address.getDistrict().get()).append("' ");
-                    needAND = true;
-                } 
-                if (!address.getStreet().get().equals("Tất cả")) {
-                    if (needAND) temp.append("and ");
-                    else temp.append("where ");
-                    temp.append("street = '").append(address.getStreet().get()).append("' ");
-                    needAND = true;
-                } 
-                boolean lowPrice = !lowerBoundPrice.get().isEmpty();
-                boolean highPrice = !upperBoundPrice.get().isEmpty();
-                if (lowPrice & highPrice) {
-                    if (needAND) temp.append("and ");
-                    else temp.append("where ");
-                    temp.append("price between ").append(getMillions(lowerBoundPrice.get())).append(" and ").append(getMillions(upperBoundPrice.get())).append(" ");
-                    needAND = true;
-                } else if (lowPrice) {
-                    if (needAND) temp.append("and ");
-                    else temp.append("where ");
-                    temp.append("price >= ").append(getMillions(lowerBoundPrice.get())).append(" ");
-                    needAND = true;
-                } else if (highPrice) {
-                    if (needAND) temp.append("and ");
-                    else temp.append("where ");
-                    temp.append("price <= ").append(getMillions(upperBoundPrice.get())).append(" ");
-                    needAND = true;
-                }
-                String numberOfBedrooms = numOfBedrooms.get().split(" ")[0];
-                if (!numOfBedrooms.get().equals("Tất cả")) {
-                    if (needAND) temp.append("and ");
-                    else temp.append("where ");
-                    if (numberOfBedrooms.equals("4+")) {
-                        temp.append("numberOfBedrooms >= 4 ");
-                    } else temp.append("numberOfBedrooms = ").append(numberOfBedrooms).append(" ");
-                    needAND = true;
-                } 
-                boolean lowArea = !lowerBoundAreaProperty.get().isEmpty();
-                boolean highArea = !upperBoundAreaProperty.get().isEmpty();
-                if (lowArea & highArea) {
-                    if (needAND) temp.append("and ");
-                    else temp.append("where ");
-                    temp.append("area between ").append(lowerBoundAreaProperty.get()).append(" and ").append(upperBoundAreaProperty.get()).append(" ");
-                    needAND = true;
-                } else if (lowArea) {
-                    if (needAND) temp.append("and ");
-                    else temp.append("where ");
-                    temp.append("area >= ").append(lowerBoundAreaProperty.get()).append(" ");
-                    needAND = true;
-                } else if (highArea) {
-                    if (needAND) temp.append("and ");
-                    else temp.append("where ");
-                    temp.append("area <= ").append(upperBoundAreaProperty.get()).append(" ");
-                    needAND = true;
-                }
-                if (needAND) temp.append("and ");
-                else temp.append("where ");
-                temp.append("isPublic = 1 ORDER BY requiringDate DESC LIMIT ").append(String.valueOf(offset)).append(",").append(limit).append(";");
-                System.out.println(temp);
-                PreparedStatement pst = createPreparedStatement(temp.toString());
                 try {
-                    if (hasKeyword) {
-                        pst.setString(1, keyWordProperty.get());
+                    boolean hasKeyword = false;
+                    
+                    StringBuffer temp = new StringBuffer("select * from houses ");
+                    boolean needAND = false;
+                    if (!keyWordProperty.get().isEmpty())  {
+                        hasKeyword = true;
+                        temp.append("where ");
+                        temp.append("match(title, description) against (?) ");
+                        needAND = true;
                     }
-                    int count = 0;
-                    ResultSet resultSet = pst.executeQuery();
-                    while (resultSet.next()) {
-                        houses.add(House.getHouseFromResultSet(resultSet));
-                        count++;
-                        updateProgress(count, limit);
+                    if(typeOfHouse.get() != HouseType.ALL) {
+                        if (needAND) temp.append("and ");
+                        else temp.append("where ");
+                        needAND = true;
+                        if (typeOfHouse.get() == HouseType.HOUSE_LAND) {
+                            temp.append("houseType = 'HOUSE_LAND' ");
+                        } else if (typeOfHouse.get() == HouseType.BEDSIT) {
+                            temp.append("houseType = 'BEDSIT' ");
+                        } else if (typeOfHouse.get() == HouseType.APARTMENT) {
+                            temp.append("houseType = 'APARTMENT' ");
+                        }
                     }
-                    System.out.println("done thread for search");
-                    housesChanged.set(true);
-                    return null;
-                
-                } catch (SQLException e) {
-                    throw new RuntimeException("Không kết nối được với database(truy vấn)");
+                    if (!address.getCity().get().equals("Tất cả")) {
+                        if (needAND) temp.append("and ");
+                        else temp.append("where ");
+                        temp.append("city = '").append(address.getCity().get()).append("' ");
+                        needAND = true;
+                    } 
+                    if (!address.getDistrict().get().equals("Tất cả")) {
+                        if (needAND) temp.append("and ");
+                        else temp.append("where ");
+                        temp.append("district = '").append(address.getDistrict().get()).append("' ");
+                        needAND = true;
+                    } 
+                    if (!address.getStreet().get().equals("Tất cả")) {
+                        if (needAND) temp.append("and ");
+                        else temp.append("where ");
+                        temp.append("street = '").append(address.getStreet().get()).append("' ");
+                        needAND = true;
+                    } 
+                    boolean lowPrice = !lowerBoundPrice.get().isEmpty();
+                    boolean highPrice = !upperBoundPrice.get().isEmpty();
+                    if (lowPrice & highPrice) {
+                        if (needAND) temp.append("and ");
+                        else temp.append("where ");
+                        temp.append("price between ").append(getMillions(lowerBoundPrice.get())).append(" and ").append(getMillions(upperBoundPrice.get())).append(" ");
+                        needAND = true;
+                    } else if (lowPrice) {
+                        if (needAND) temp.append("and ");
+                        else temp.append("where ");
+                        temp.append("price >= ").append(getMillions(lowerBoundPrice.get())).append(" ");
+                        needAND = true;
+                    } else if (highPrice) {
+                        if (needAND) temp.append("and ");
+                        else temp.append("where ");
+                        temp.append("price <= ").append(getMillions(upperBoundPrice.get())).append(" ");
+                        needAND = true;
+                    }
+                    String numberOfBedrooms = numOfBedrooms.get().split(" ")[0];
+                    if (!numOfBedrooms.get().equals("Tất cả")) {
+                        if (needAND) temp.append("and ");
+                        else temp.append("where ");
+                        if (numberOfBedrooms.equals("4+")) {
+                            temp.append("numberOfBedrooms >= 4 ");
+                        } else temp.append("numberOfBedrooms = ").append(numberOfBedrooms).append(" ");
+                        needAND = true;
+                    } 
+                    boolean lowArea = !lowerBoundAreaProperty.get().isEmpty();
+                    boolean highArea = !upperBoundAreaProperty.get().isEmpty();
+                    if (lowArea & highArea) {
+                        if (needAND) temp.append("and ");
+                        else temp.append("where ");
+                        temp.append("area between ").append(lowerBoundAreaProperty.get()).append(" and ").append(upperBoundAreaProperty.get()).append(" ");
+                        needAND = true;
+                    } else if (lowArea) {
+                        if (needAND) temp.append("and ");
+                        else temp.append("where ");
+                        temp.append("area >= ").append(lowerBoundAreaProperty.get()).append(" ");
+                        needAND = true;
+                    } else if (highArea) {
+                        if (needAND) temp.append("and ");
+                        else temp.append("where ");
+                        temp.append("area <= ").append(upperBoundAreaProperty.get()).append(" ");
+                        needAND = true;
+                    }
+                    if (needAND) temp.append("and ");
+                    else temp.append("where ");
+                    temp.append("isPublic = 1 ORDER BY requiringDate DESC LIMIT ").append(String.valueOf(offset)).append(",").append(limit).append(";");
+                    System.out.println(temp);
+                    PreparedStatement pst = createPreparedStatement(temp.toString());
+                    try {
+                        if (hasKeyword) {
+                            pst.setString(1, keyWordProperty.get());
+                        }
+                        int count = 0;
+                        ResultSet resultSet = pst.executeQuery();
+                        while (resultSet.next()) {
+                            houses.add(House.getHouseFromResultSet(resultSet));
+                            count++;
+                            updateProgress(count, limit);
+                        }
+                        updateProgress(1, 1);
+                        System.out.println("done thread for search");
+                        return null;
+                    
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Không kết nối được với database(truy vấn)");
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    throw new RuntimeException(e.getMessage());
                 }
             }
         };
         System.out.println("start thread");
+        st.setOnSucceeded(e -> {
+            housesChanged.set(true);
+        });
         st.startInThread();
         // st.execute();
         return;

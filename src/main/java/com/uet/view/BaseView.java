@@ -26,6 +26,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -90,8 +92,15 @@ public class BaseView extends StackPane {
         progressBar.setMaxWidth(2000);
         progressBar.getStyleClass().addAll(Styles.SMALL);
         progressBar.setVisible(false);
-        EventHandler consumer = e -> e.consume();
+        EventHandler consumer = e -> {
+            if (e.getEventType().equals(MouseEvent.MOUSE_PRESSED) || e.getEventType().equals(MouseEvent.MOUSE_CLICKED)
+            || e.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+                e.consume();
+                System.out.println("consume pressed mouse event");
+            }
+        };
         progressBar.progressProperty().addListener((obs, old, neww) -> {
+            System.out.println(old + " " + neww);
             if ((double) old == 0) {
                 progressBar.setVisible(true);
                 //todo: only contentContainer is block
