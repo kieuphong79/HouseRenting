@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import com.uet.App;
+import com.uet.threads.MultiThread;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -60,14 +61,7 @@ public class ImageShower extends VBox{
             }
         };
         //todo thread management
-        ExecutorService ex = Executors.newFixedThreadPool(1, new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                Thread t = Executors.defaultThreadFactory().newThread(r);
-                t.setDaemon(true);
-                return t;
-            }
-        });
         
-        ex.execute(task);
+        MultiThread.execute(task);
     }
 }
