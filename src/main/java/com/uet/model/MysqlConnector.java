@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+
 public class MysqlConnector implements DataConnector {
     private Connection connection;
     private static String host = "localhost";
@@ -13,7 +14,7 @@ public class MysqlConnector implements DataConnector {
 
     private static MysqlConnector singleton;
 
-    public static MysqlConnector getInstance() {
+    public static MysqlConnector getInstance() throws SQLException {
         if (singleton == null) singleton = new MysqlConnector();
         return singleton;
     }
@@ -21,20 +22,21 @@ public class MysqlConnector implements DataConnector {
         return connection;
     }
 
-    public MysqlConnector() {
+    public MysqlConnector() throws SQLException {
         connect();
     }
 
 
 
-    public void connect() {
+    public void connect() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             String url = "jdbc:mysql://" + host + "/" + database;
             this.connection = DriverManager.getConnection(url, username, password); 
             System.out.println("Connected to MySQL database successfully!");
-        } catch (ClassNotFoundException | SQLException e) {
-            throw new RuntimeException("Không kết nối được với database");
+        }
+        catch (ClassNotFoundException e) {
+            throw new RuntimeException(e.getMessage());
         }
     } 
     

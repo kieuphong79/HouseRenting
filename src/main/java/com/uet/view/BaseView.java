@@ -26,7 +26,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -187,6 +186,7 @@ public class BaseView extends StackPane {
 
     
     public void setContent(Node node) {
+        //todo navigator mangaement
         int sizeChildern = baseContainer.getChildren().size();
         if ( sizeChildern == 2) {
             baseContainer.getChildren().add(node);

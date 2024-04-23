@@ -4,10 +4,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import com.uet.App;
+
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.ImageView;
@@ -35,21 +36,30 @@ public class ImageShower extends VBox{
         this.getChildren().addAll(pg);
         Task<HBox[]> task = new Task<HBox[]>() {
             @Override
-            protected HBox[] call() throws Exception {
+            protected HBox[] call() {
+                //debug
                 for (int i = 0; i < 1/*imageContainer.length*/; i++) {
                     var t = i;
-                    ImageView temp = new ImageView(imagesLink[t]);
+                    ImageView temp;
+                    try {
+                        temp = new ImageView(imagesLink[t]);
+                    }
+                    catch(Exception e) {
+                        temp = new ImageView(App.class.getResource("imageError.png").toString());
+                    }
+                    final var temp1 = temp;
                     temp.setPreserveRatio(true);
                     temp.setFitHeight(500);
                     System.out.println(i + " done!");
                     Platform.runLater(() -> {
                         imageContainer[t].getChildren().remove(0);
-                        imageContainer[t].getChildren().add(temp);
+                        imageContainer[t].getChildren().add(temp1);
                     });
                 }
                 return imageContainer;
             }
         };
+        //todo thread management
         ExecutorService ex = Executors.newFixedThreadPool(1, new ThreadFactory() {
             public Thread newThread(Runnable r) {
                 Thread t = Executors.defaultThreadFactory().newThread(r);

@@ -3,10 +3,10 @@ package com.uet.model;
 //             int numKitchens, int numToilets, float area, String imagesUrl, HouseType houseType, int isPublic, Date date) {
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class House {
-    public static House getHouseFromResultSet(ResultSet rs) {
-        try {
+    public static House getHouseFromResultSet(ResultSet rs) throws SQLException {
             int id = rs.getInt("id");
             String username = rs.getString("username");
             String title = rs.getString("title");
@@ -30,9 +30,7 @@ public class House {
             Date requiringDate = rs.getDate("requiringDate");
             return new House(id, username, title, price, description, new Address(address, city, district, street), numberOfBedrooms,
                 numberOfKitchens, numberOfToilets, area, imagesURL, actualHouseType, isPublic, requiringDate);
-        } catch(Exception e) {
-            throw new RuntimeException("Không thể kết nối đến database(tạo nhà)");
-        }
+       
 
     }
    /*id : "2198"

@@ -4,33 +4,20 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
 import com.uet.view.BaseView;
 
 import javafx.concurrent.Task;
 
 
 public abstract class DataStatement<T> extends Task<T> {
-    public Statement createStatement() {
-        try {
-            return MysqlConnector.getInstance().getConnection().createStatement();
-        } catch (SQLException e) {
-            throw new RuntimeException("Không thể kết nối tới database(tạo statement)");
-        }
+    public Statement createStatement() throws SQLException {
+        return MysqlConnector.getInstance().getConnection().createStatement();
     }
-    public PreparedStatement createPreparedStatement(String st) {
-        try {
-            return MysqlConnector.getInstance().getConnection().prepareStatement(st);
-        } catch (SQLException e) {
-            throw new RuntimeException("Không thể kết nối tới database(tạo statement)");
-        }
+    public PreparedStatement createPreparedStatement(String st) throws SQLException {
+        return MysqlConnector.getInstance().getConnection().prepareStatement(st);
     }
-    public T execute() {
-        try {
-            return this.call();
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+    public T startInMainThread() throws Exception{
+        return this.call();
     }
 
     public void startInThread() {

@@ -14,6 +14,7 @@ public enum HouseType {
         if (type.equals("APARTMENT")) return APARTMENT;
         else if (type.equals("BEDSIT")) return BEDSIT;
         else if (type.equals("HOUSE_LAND")) return HOUSE_LAND;
-        throw new RuntimeException("Loai nha khong hop le");
+        // đảm bảo ở phía database 
+        throw new RuntimeException("Loaị nhà không hợp lệ");
     }
 }

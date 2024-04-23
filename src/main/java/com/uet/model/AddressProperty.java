@@ -51,4 +51,7 @@ public class AddressProperty {
         address.set("Tất cả");
         street.set("Tất cả");
     }
+    public Address toAddress() {
+        return new Address(address.get(), city.get(), district.get(), street.get());
+    }
 }

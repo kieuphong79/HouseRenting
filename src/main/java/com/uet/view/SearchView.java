@@ -12,10 +12,12 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2MZ;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
 
+import com.uet.App;
 import com.uet.model.House;
-import com.uet.viewmodel.SearchBarViewModel;
+import com.uet.viewmodel.SearchViewModel;
 
 import atlantafx.base.theme.Styles;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
@@ -37,14 +39,15 @@ import javafx.scene.text.Text;
 
 public class SearchView extends ScrollPane {
     private SearchBar searchBar;
-    private SearchBarViewModel searchBarViewModel;
-    private SimpleBooleanProperty houseChanged;
+    private SearchViewModel searchViewModel;
+    private SimpleBooleanProperty housesChanged;
     private VBox container;
     public SearchView() {
         super();
         searchBar = new SearchBar();
-        searchBarViewModel = searchBar.getSearchBarViewModel();
-        houseChanged = new SimpleBooleanProperty(false);
+        searchViewModel = new SearchViewModel();
+        searchBar.setOnSearchButton(searchViewModel);
+        housesChanged = new SimpleBooleanProperty(false);
         
         container = new VBox();
         this.setContent(container);
@@ -52,9 +55,9 @@ public class SearchView extends ScrollPane {
         container.setSpacing(20);
         // searchBarViewModel.search(10, 0);
         //bind
-        houseChanged.bind(searchBarViewModel.houseChangedProperty());
+        housesChanged.bind(searchViewModel.housesChangedProperty());
         System.out.println("binded");
-        houseChanged.addListener((obs, old, neww) -> {
+        housesChanged.addListener((obs, old, neww) -> {
             if (neww) {
                 System.out.println("update");
                 this.update();
@@ -66,29 +69,25 @@ public class SearchView extends ScrollPane {
         return searchBar;
     }
     public void update() {
-        //todo: optomize load indicator 
-        List<House> houses = searchBarViewModel.getHouses();
+        //todo seperate data and view, show if no result
+        List<House> houses = searchViewModel.getHouses();
         Task<List<VBox>> task = new Task<>() {
 
             @Override
-            protected List<VBox> call() throws Exception {
-                try {
-                    List<VBox> temp = new ArrayList<>();
-                    for (int i = 0; i < houses.size() - 7; i++) {
-                        temp.add(createHouseOverview(houses.get(i)));
-                        updateProgress(i, houses.size() - 1);
-                    }
-                    updateProgress(1, 1);
-                    return temp;
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    throw new RuntimeException(e.getMessage());
+            protected List<VBox> call() {
+                List<VBox> temp = new ArrayList<>();
+                for (int i = 0; i < houses.size() ; i++) {
+                    temp.add(createHouseOverview(houses.get(i)));
+                    updateProgress(i, houses.size() - 1);
                 }
+                updateProgress(1, 1);
+                return temp;
             }
             
         };
         BaseView.getInstance().getProgressBar().progressProperty().bind(task.progressProperty());
         task.setOnSucceeded(e -> {
+            System.out.println(Thread.currentThread().getName() + "Dang o day");
             container.getChildren().clear();
             try {
                 container.getChildren().addAll(task.get());
@@ -175,11 +174,10 @@ public class SearchView extends ScrollPane {
         tempBig.setMinWidth(315);
         tempBig.setMaxWidth(315);
         tempBig.setAlignment(Pos.CENTER);
-        tempBig.setStyle("-fx-background-color: gray;");
 
         Task<ImageView> task = new Task<ImageView>() {
             @Override
-            protected ImageView call() throws Exception {
+            protected ImageView call() {
                 ImageView bigImageView = new ImageView(createFitImage(imageLinks[0]));
                 bigImageView.setFitWidth(315);
                 bigImageView.setPreserveRatio(true);
@@ -214,11 +212,10 @@ public class SearchView extends ScrollPane {
             temp.setAlignment(Pos.CENTER);
             temp.setMaxWidth(104);
             temp.setMinWidth(104);
-            temp.setStyle("-fx-background-color:-color-base-" + i + ";");
             GridPane.setHgrow(temp, Priority.ALWAYS);
             Task<Void> task1 = new Task<Void>() {
                 @Override
-                protected Void call() throws Exception {
+                protected Void call() {
                     ImageView smallImageView = new ImageView(createFitImage(imageLinks[j]));
                     smallImageView.setFitWidth(104);
                     smallImageView.setPreserveRatio(true);
@@ -245,7 +242,13 @@ public class SearchView extends ScrollPane {
         return container;
     }
     public Image createFitImage(String link) {
-        var bigImage = new Image(link);
+        Image bigImage;
+        try {
+            // bigImage = new Image(link);
+            bigImage = new Image("asd.com");
+        } catch (Exception e) {
+            bigImage = new Image(App.class.getResource("imageError.png").toString());
+        }
         if (bigImage.getWidth() * 3 < bigImage.getHeight() * 4) {
             var pr = bigImage.getPixelReader();
             bigImage = new WritableImage(pr, 0, (int)(bigImage.getHeight() - (bigImage.getWidth()*3)/ 4 ) / 2, (int)bigImage.getWidth(), (int) ((bigImage.getWidth()*3)/ 4));

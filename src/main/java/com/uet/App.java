@@ -1,7 +1,9 @@
 package com.uet;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
+import com.uet.model.MysqlConnector;
 import com.uet.view.BaseView;
 
 import javafx.application.Application;
@@ -19,6 +21,11 @@ public class App extends Application {
         Scene scene = new Scene(BaseView.getInstance());
         stage.setScene(scene);
         stage.setMaximized(true);
+        try {
+            MysqlConnector.getInstance();
+        } catch(SQLException e) {
+            BaseView.getInstance().createMessage("Danger", "Không thể kết nối tới database server");
+        }
         stage.show();
     }
 

@@ -7,7 +7,9 @@ import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
 
 import com.uet.model.HouseType;
+import com.uet.model.SearchParameter;
 import com.uet.viewmodel.SearchBarViewModel;
+import com.uet.viewmodel.SearchViewModel;
 
 import atlantafx.base.controls.CustomTextField;
 import atlantafx.base.theme.Styles;
@@ -40,6 +42,7 @@ public class SearchBar extends HBox{
     private TextField lowerBoundArea;
     private TextField upperBoundArea;
 
+    private Button searchButton;
     public SearchBar() {
         super();
         
@@ -71,6 +74,7 @@ public class SearchBar extends HBox{
                 if (s.equals("Nhà nguyên căn")) return HouseType.HOUSE_LAND;
                 if (s.equals("Chung cư")) return HouseType.APARTMENT;
                 if (s.equals("Nhà trọ")) return HouseType.BEDSIT;
+                // Đảm bảo phía database
                 throw new RuntimeException("Kieu nha khong thich hop");
             }
         });
@@ -123,7 +127,6 @@ public class SearchBar extends HBox{
         ChoiceBox<String> cityChoiceBox = new ChoiceBox<>();
         cityChoiceBox.getItems().add("Tất cả");
         cityChoiceBox.getItems().addAll(searchBarViewModel.getPossibleCity());
-        System.out.println(searchBarViewModel.houseChangedProperty().get());
         cityChoiceBox.getSelectionModel().selectFirst();
         cityChoiceBox.setPrefWidth(150);
         
@@ -268,15 +271,11 @@ public class SearchBar extends HBox{
             e.consume();
         }); 
 
-        Button searchButton = new Button("Tìm kiếm");
+        searchButton = new Button("Tìm kiếm");
         searchButton.getStyleClass().addAll(Styles.ACCENT);
         FontIcon searchIcon1 = new FontIcon(Material2MZ.SEARCH);
         searchIcon1.setIconSize(20);
         searchButton.setGraphic(searchIcon1);
-        searchButton.setOnAction(e -> {
-            System.out.println("button searhc");
-            searchBarViewModel.search(10, 0);
-        });
         
         Button resetButton = new Button();
         resetButton.getStyleClass().addAll(Styles.BUTTON_ICON, Styles.DANGER);
@@ -331,7 +330,12 @@ public class SearchBar extends HBox{
                 return;
             }
             districChoiceBox.getItems().retainAll("Tất cả");
-            districChoiceBox.getItems().addAll(searchBarViewModel.getPossibleDistrict());
+            try {
+                districChoiceBox.getItems().addAll(searchBarViewModel.getPossibleDistrict());
+            } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
             // districtItem.setVisible(true);
        });
        districChoiceBox.valueProperty().addListener((obs, old, neww) -> {
@@ -343,7 +347,12 @@ public class SearchBar extends HBox{
                 return;
             }
             streetChoiceBox.getItems().retainAll("Tất cả");
-            streetChoiceBox.getItems().addAll(searchBarViewModel.getPossibleStreet());
+            try {
+                streetChoiceBox.getItems().addAll(searchBarViewModel.getPossibleStreet());
+            } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
        });
        streetChoiceBox.valueProperty().addListener((obs, old, neww) -> {
             if (old.equals(neww)) return;
@@ -450,4 +459,15 @@ public class SearchBar extends HBox{
         return res;
     }
     public SearchBarViewModel getSearchBarViewModel() {return searchBarViewModel;}
+
+    public void setOnSearchButton(SearchViewModel searchViewModel) {
+        searchButton.setOnAction(e -> {
+            System.out.println("button searhc");
+            searchViewModel.setOffset(0);
+            SearchParameter t = new SearchParameter(searchBarViewModel);
+            searchViewModel.setSearchParameter(t);
+            searchViewModel.search();
+            //todo
+        });
+    }
 }   
