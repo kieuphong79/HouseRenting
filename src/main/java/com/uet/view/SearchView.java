@@ -3,14 +3,16 @@ package com.uet.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import com.uet.model.House;
+import com.uet.threads.MultiThread;
 import com.uet.viewmodel.SearchViewModel;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
@@ -37,7 +39,7 @@ public class SearchView extends ScrollPane {
         for (int i = 0; i < searchViewModel.getLimit(); i++) {
             listHousesContainer.add(new HouseOverview());
         }
-        container.getChildren().addAll(listHousesContainer);
+        // container.getChildren().addAll(listHousesContainer);
         //bind
         housesChanged.bind(searchViewModel.housesChangedProperty());
         System.out.println("binded");
@@ -54,13 +56,51 @@ public class SearchView extends ScrollPane {
     public void update() {
         //todo seperate data and view, show if no result
         List<House> houses = searchViewModel.getHouses();
-        for (int i = 0; i < searchViewModel.getLimit(); i++) {
-            if (i > houses.size() - 1) {
-                listHousesContainer.get(i).setVisible(false);
-            } else {
-                listHousesContainer.get(i).update(houses.get(i));
+        container.getChildren().clear();
+        Task<Void> task = new Task<Void>() {
+
+            @Override
+            protected Void call() throws Exception {
+                for (int i = 0; i < searchViewModel.getLimit(); i++) {
+                    if (i > houses.size() - 1) {
+                        return null;
+                    } else {
+                        final int j = i;
+                        listHousesContainer.get(i).update(houses.get(i));
+                        Platform.runLater(() -> {
+                            container.getChildren().add(listHousesContainer.get(j));
+                        });
+                    }
+                }
+                return null;
             }
-        }
+            
+        };
+        MultiThread.execute(task);
+        // for (int i = 0; i < searchViewModel.getLimit(); i++) {
+        //     if (i > houses.size() - 1) {
+        //         return;
+        //     } else {
+        //         final int j = i;
+        //         Task<Void> task = new Task<Void>() {
+
+        //             @Override
+        //             protected Void call() throws Exception {
+        //                 try {
+        //                 listHousesContainer.get(j).update(houses.get(j));
+        //                 } catch (Exception e) {
+        //                     System.out.println(e.getMessage());
+        //                 }
+        //                 return null;
+        //             }
+                    
+        //         };
+        //         task.setOnSucceeded((e) -> {
+        //             container.getChildren().add(listHousesContainer.get(j));
+        //         });
+        //         MultiThread.execute(task);
+        //     }
+        // }
         // Task<Void> task = new Task<>() {
         //     @Override
         //     protected Void call() {
@@ -87,7 +127,7 @@ public class SearchView extends ScrollPane {
         // Thread thread = new Thread(task);
         // thread.setDaemon(true);
         // thread.start();
-        System.out.println("update succesfully");
+        // System.out.println("update succesfully");
     }
     // public VBox createHouseOverview(House house) {
     //     VBox res = new VBox();

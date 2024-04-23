@@ -164,6 +164,7 @@ public class HouseOverview extends VBox {
             imageLinks = t;
             tempBig.getChildren().clear();
             tempBig.getChildren().add(bigLoader);
+            this.getChildren().remove(smallImagesGrid);
             Task<Void> task = new Task<Void>() {
                 @Override
                 protected Void call() {
@@ -177,10 +178,9 @@ public class HouseOverview extends VBox {
             };
             MultiThread.execute(task);
             if (imageLinks.length < 4) {
-                smallImagesGrid.setVisible(false);
                 return;
             }
-            smallImagesGrid.setVisible(true);
+            this.getChildren().add(smallImagesGrid);
             for (int i = 1; i < 4; i++) { 
                 tempSmalls[i - 1].getChildren().clear();
                 tempSmalls[i - 1].getChildren().add(smallLoaders[i - 1]);
