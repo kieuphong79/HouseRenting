@@ -181,23 +181,40 @@ public class HouseOverview extends VBox {
                 return;
             }
             this.getChildren().add(smallImagesGrid);
-            for (int i = 1; i < 4; i++) { 
-                tempSmalls[i - 1].getChildren().clear();
-                tempSmalls[i - 1].getChildren().add(smallLoaders[i - 1]);
-                final int j = i;
-                Task<Void> task1 = new Task<Void>() {
-                    @Override
-                    protected Void call() {
-                        smallImageViews[j - 1].setImage(createFitImage(imageLinks[j]));
+            Task<Void> task1 = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    for (int i = 1; i < 4; i++) { 
+                        final int j = i;
+                            tempSmalls[i - 1].getChildren().clear();
+                            tempSmalls[i - 1].getChildren().add(smallLoaders[i - 1]);
+                            smallImageViews[j - 1].setImage(createFitImage(imageLinks[j]));
                         Platform.runLater(() -> {
                             tempSmalls[j - 1].getChildren().clear();
                             tempSmalls[j - 1].getChildren().add(smallImageViews[j - 1]);
                         });
-                        return null;
                     }
-                };
-                MultiThread.execute(task1);
-            }
+                    return null;
+                }
+            };
+            MultiThread.execute(task1);
+            // for (int i = 1; i < 4; i++) { 
+            //     tempSmalls[i - 1].getChildren().clear();
+            //     tempSmalls[i - 1].getChildren().add(smallLoaders[i - 1]);
+            //     final int j = i;
+            //     Task<Void> task1 = new Task<Void>() {
+            //         @Override
+            //         protected Void call() {
+            //             smallImageViews[j - 1].setImage(createFitImage(imageLinks[j]));
+            //             Platform.runLater(() -> {
+            //                 tempSmalls[j - 1].getChildren().clear();
+            //                 tempSmalls[j - 1].getChildren().add(smallImageViews[j - 1]);
+            //             });
+            //             return null;
+            //         }
+            //     };
+            //     MultiThread.execute(task1);
+            // }
         }
         public Image createFitImage(String link) {
             Image image;
