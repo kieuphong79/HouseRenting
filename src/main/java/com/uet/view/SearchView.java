@@ -127,7 +127,7 @@ public class SearchView extends ScrollPane {
         // Thread thread = new Thread(task);
         // thread.setDaemon(true);
         // thread.start();
-        // System.out.println("update succesfully");
+        System.out.println("update succesfully");
     }
     // public VBox createHouseOverview(House house) {
     //     VBox res = new VBox();

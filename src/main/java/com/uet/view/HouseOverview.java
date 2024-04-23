@@ -1,5 +1,6 @@
 package com.uet.view;
 
+
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2MZ;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
@@ -181,18 +182,25 @@ public class HouseOverview extends VBox {
                 return;
             }
             this.getChildren().add(smallImagesGrid);
+            for (int i = 0; i < 3; i++) {
+                tempSmalls[i].getChildren().clear();
+                tempSmalls[i].getChildren().add(smallLoaders[i]);
+            }
             Task<Void> task1 = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
-                    for (int i = 1; i < 4; i++) { 
-                        final int j = i;
-                            tempSmalls[i - 1].getChildren().clear();
-                            tempSmalls[i - 1].getChildren().add(smallLoaders[i - 1]);
-                            smallImageViews[j - 1].setImage(createFitImage(imageLinks[j]));
-                        Platform.runLater(() -> {
-                            tempSmalls[j - 1].getChildren().clear();
-                            tempSmalls[j - 1].getChildren().add(smallImageViews[j - 1]);
-                        });
+                    try {
+                        for (int i = 1; i < 4; i++) { 
+                            smallImageViews[i - 1].setImage(createFitImage(imageLinks[i]));
+                            final int j = i;
+                            Platform.runLater(() -> {
+                                tempSmalls[j - 1].getChildren().clear();
+                                tempSmalls[j - 1].getChildren().add(smallImageViews[j - 1]);
+                            });
+                        }
+                        
+                    } catch(Exception e) {
+                        System.out.println(e.getMessage());
                     }
                     return null;
                 }

@@ -322,14 +322,15 @@ public class SearchBar extends HBox{
        cityChoiceBox.valueProperty().addListener((obs, old, neww) -> {
             if (old.equals(neww)) return;
             detailAddressText.setText(searchBarViewModel.getAddress().toString());
-            if (neww.equals("Tất cả")) {
+            // if (neww.equals("Tất cả")) {
                 districChoiceBox.getItems().retainAll("Tất cả");
                 districChoiceBox.setValue("Tất cả");
                 streetChoiceBox.getItems().retainAll("Tất cả");
                 streetChoiceBox.setValue("Tất cả");
-                return;
-            }
-            districChoiceBox.getItems().retainAll("Tất cả");
+            //     return;
+            // }
+            // districChoiceBox.getItems().retainAll("Tất cả");
+            // districChoiceBox.setValue("Tất cả");
             try {
                 districChoiceBox.getItems().addAll(searchBarViewModel.getPossibleDistrict());
             } catch (Exception e1) {
@@ -347,6 +348,7 @@ public class SearchBar extends HBox{
                 return;
             }
             streetChoiceBox.getItems().retainAll("Tất cả");
+            streetChoiceBox.setValue("Tất cả");
             try {
                 streetChoiceBox.getItems().addAll(searchBarViewModel.getPossibleStreet());
             } catch (Exception e1) {
