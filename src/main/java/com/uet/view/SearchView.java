@@ -61,16 +61,20 @@ public class SearchView extends ScrollPane {
 
             @Override
             protected Void call() throws Exception {
-                for (int i = 0; i < searchViewModel.getLimit(); i++) {
-                    if (i > houses.size() - 1) {
-                        return null;
-                    } else {
-                        final int j = i;
-                        listHousesContainer.get(i).update(houses.get(i));
-                        Platform.runLater(() -> {
-                            container.getChildren().add(listHousesContainer.get(j));
-                        });
+                try {
+                    for (int i = 0; i < searchViewModel.getLimit(); i++) {
+                        if (i > houses.size() - 1) {
+                            return null;
+                        } else {
+                            final int j = i;
+                            listHousesContainer.get(i).update(houses.get(i));
+                            Platform.runLater(() -> {
+                                container.getChildren().add(listHousesContainer.get(j));
+                            });
+                        }
                     }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
                 return null;
             }
