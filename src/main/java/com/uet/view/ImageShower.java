@@ -60,8 +60,6 @@ public class ImageShower extends VBox{
                 return imageContainer;
             }
         };
-        //todo thread management
-        
         MultiThread.execute(task);
     }
 }

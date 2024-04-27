@@ -223,7 +223,7 @@ public class SearchBar extends HBox{
         
 
         ContextMenu numBedRoomContextMenu = new ContextMenu();
-        numBedRoomContextMenu.getItems().addAll(createNumBedroomsSample("1"), createNumBedroomsSample("2"), createNumBedroomsSample("3"), createNumBedroomsSample("4+"));
+        numBedRoomContextMenu.getItems().addAll(createNumBedroomsSample("Tất cả"), createNumBedroomsSample("1"), createNumBedroomsSample("2"), createNumBedroomsSample("3"), createNumBedroomsSample("4+"));
 
         numBedroomsChoiceContainer.setOnMouseClicked((e) -> {
             numBedRoomContextMenu.show(numBedroomsChoiceContainer, Side.BOTTOM, 0, 0);
@@ -323,9 +323,9 @@ public class SearchBar extends HBox{
             if (old.equals(neww)) return;
             detailAddressText.setText(searchBarViewModel.getAddress().toString());
             // if (neww.equals("Tất cả")) {
-                districChoiceBox.getItems().retainAll("Tất cả");
-                districChoiceBox.setValue("Tất cả");
-                streetChoiceBox.getItems().retainAll("Tất cả");
+            districChoiceBox.getItems().retainAll("Tất cả");
+            districChoiceBox.setValue("Tất cả");
+            streetChoiceBox.getItems().retainAll("Tất cả");
                 streetChoiceBox.setValue("Tất cả");
             //     return;
             // }
@@ -453,6 +453,14 @@ public class SearchBar extends HBox{
         return res;
     }
     private MenuItem createNumBedroomsSample(String s) {
+        if (s.equals("Tất cả")) {
+            MenuItem res = new MenuItem();
+            res.setText(s);
+            res.setOnAction(e -> {
+                detailNumBedrooms.setText(res.getText());
+            });
+            return res;
+        }
         MenuItem res = new MenuItem();
         res.setText(s + " phòng");
         res.setOnAction(e -> {

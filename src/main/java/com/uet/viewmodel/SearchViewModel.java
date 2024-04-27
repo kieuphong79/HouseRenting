@@ -3,6 +3,7 @@ package com.uet.viewmodel;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class SearchViewModel {
     private SimpleBooleanProperty housesChanged;
     private int offset;
     private int limit;
+    private int total;
     private SearchParameter curParameter;
     
     public SearchViewModel() {
@@ -40,6 +42,9 @@ public class SearchViewModel {
         DataStatement<Void> st = new DataStatement<Void>() {
             @Override
             protected Void call() {
+                // //debug
+                // try {
+                // //debug
                 boolean hasKeyword = false;
                 StringBuffer temp = new StringBuffer("select * from houses ");
                 boolean needAND = false;
@@ -127,9 +132,10 @@ public class SearchViewModel {
                 if (needAND) temp.append("and ");
                 else temp.append("where ");
                 temp.append("isPublic = 1 ORDER BY requiringDate DESC LIMIT ").append(String.valueOf(offset)).append(",").append(limit).append(";");
-                System.out.println(temp);
                 try {
-                    PreparedStatement pst = createPreparedStatement(temp.toString());
+                    String t = temp.toString();
+                    System.out.println(t);
+                    PreparedStatement pst = createPreparedStatement(t);
                     if (hasKeyword) {
                         pst.setString(1, curParameter.getKeyWord());
                     }
@@ -139,6 +145,14 @@ public class SearchViewModel {
                         houses.add(House.getHouseFromResultSet(resultSet));
                         count++;
                         updateProgress(count, limit);
+                    }
+                    PreparedStatement st = createPreparedStatement(t.replace("*", "count(*)"));
+                    if (hasKeyword) {
+                        st.setString(1, curParameter.getKeyWord());
+                    }
+                    ResultSet rs = st.executeQuery();
+                    while(rs.next()) {
+                        total = rs.getInt(1);
                     }
                     updateProgress(1, 1);
                     System.out.println("done thread for search");
@@ -151,6 +165,12 @@ public class SearchViewModel {
                     System.out.println(e.getMessage());
                     return null;
                 }
+                // //debug
+                // } catch(Exception e) {
+                //     System.out.println(e.getMessage());
+                // }
+                // return null;
+                // //debug
             }
         };
         System.out.println("start thread");
@@ -171,4 +191,8 @@ public class SearchViewModel {
     public void setSearchParameter(SearchParameter t) {
         curParameter = t;
     }
+    public String getSearchInformation() {
+        return curParameter.toString();
+    }
+    public int getTotalHouses() {return total;}
 }

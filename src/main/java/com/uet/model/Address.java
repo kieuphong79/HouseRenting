@@ -38,5 +38,15 @@ public class Address {
     public void setStreet(String street) {
         this.street = street;
     }
+    public String toInsufficientString() {
+        String res = "";
+        if (city.equals("Tất cả")) return res;
+        res = city;
+        if (district.equals("Tất cả")) return res;
+        res = district + ", " + res;
+        if (street.equals("Tất cả")) return res;
+        res = street + ", " + res;
+        return res;
+    }
     
 }

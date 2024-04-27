@@ -26,7 +26,7 @@ public class SearchParameter {
     public SearchParameter() {
         keyWord = "";
         upperBoundPrice = "";
-        lowerBoundArea = "";
+        lowerBoundPrice = "";
         address = new Address("Tất cả", "Tất cả", "Tất cả", "Tất cả");
         typeOfHouse = HouseType.ALL;
         lowerBoundArea = "";
@@ -75,6 +75,39 @@ public class SearchParameter {
     public String getNumOfBedrooms() {
         return numOfBedrooms;
     }
+    public String toString() {
+        if (!keyWord.isEmpty()) return "Kết quả tìm kiếm cho từ khóa \"" + keyWord + "\"";
+        String s = "Cho thuê ";
+        if (typeOfHouse == HouseType.ALL) {
+            s += "nhà";
+        } else {
+            s += typeOfHouse.toString();
+        }
+        String t = address.toInsufficientString();
+        if (!t.isEmpty()) {
+            s += ", " + address.toInsufficientString();
+        } else {
+            s += " trên toàn quốc";
+        }
+        if (!lowerBoundPrice.isEmpty() && !upperBoundPrice.isEmpty()) {
+            s += ", giá " + lowerBoundPrice + " - " + upperBoundPrice + " triệu";
+        } else if (!lowerBoundPrice.isEmpty() && upperBoundPrice.isEmpty()) {
+            s += ", giá từ " + lowerBoundPrice + " triệu";
+        } else if (lowerBoundPrice.isEmpty() && !upperBoundPrice.isEmpty()) {
+            s += ", giá dưới " + upperBoundPrice + " triệu";
+        }
+        if (!lowerBoundArea.isEmpty() && !upperBoundArea.isEmpty()) {
+            s += ", " + lowerBoundArea + " - " + upperBoundArea + " m²";
+        } else if (!lowerBoundArea.isEmpty() && upperBoundArea.isEmpty()) {
+            s += ", từ " + lowerBoundArea + " m²";
+        } else if (lowerBoundArea.isEmpty() && !upperBoundArea.isEmpty()) {
+            s += ", dưới " + upperBoundArea + " m²";
+        }
+        if (!numOfBedrooms.equals("Tất cả")) {
+            s += ", " + numOfBedrooms + " ngủ";
+        }
+        return s;
 
+    }
     
 }
