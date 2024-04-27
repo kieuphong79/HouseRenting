@@ -49,14 +49,17 @@ public class SearchView extends ScrollPane {
         textResult.setWrappingWidth(800);
 
         totalText = new Text("abc");
-
-        // pg = new Pagination(10, 0);
-        // pg.setPageFactory(index -> {
-        //     System.out.println("hererr");
-        //     searchViewModel.setOffset(searchViewModel.getOffset() + index * searchViewModel.getLimit());
-        //     searchViewModel.search();
-        //     return null;
-        // });
+        
+        pg = new Pagination();
+        pg.setMaxPageIndicatorCount(10);
+        pg.currentPageIndexProperty().addListener((obs, old, neww) -> {
+            if (old == neww) return;
+            System.out.println((int)neww);
+            searchViewModel.setOffset((int)(neww) * searchViewModel.getLimit());
+            System.out.println("page change");
+            searchViewModel.search();
+            
+        });
 
 
         noResultImage = new ImageView(App.class.getResource("noResult.png").toString());
@@ -79,7 +82,7 @@ public class SearchView extends ScrollPane {
         this.setContent(container);
         container.setPadding(new Insets(30, 0, 10, 30));
         container.setSpacing(20);
-        container.getChildren().addAll(textResult, totalText);
+        container.getChildren().addAll(textResult, totalText, pg);
 
         listHousesContainer = new ArrayList<>();
         for (int i = 0; i < searchViewModel.getLimit(); i++) {
@@ -103,16 +106,17 @@ public class SearchView extends ScrollPane {
         this.setVvalue(0);
         //todo seperate data and view, show if no result
         List<House> houses = searchViewModel.getHouses();
-        container.getChildren().retainAll(textResult, totalText);
+        container.getChildren().retainAll(textResult, totalText, pg);
         textResult.setText(searchViewModel.getSearchInformation());
         totalText.setText("Hiện có " + searchViewModel.getTotalHouses() + " bất động sản.");
         
         if (houses.isEmpty()) {
             container.getChildren().addAll(noResultImage, resetButton);
         }
-        // int totalPage = searchViewModel.getTotalHouses() / searchViewModel.getLimit();
-        // if (searchViewModel.getTotalHouses() % searchViewModel.getLimit() != 0)  totalPage++;
-        // pg.setPageCount(totalPage);
+        int totalPage = searchViewModel.getTotalHouses() / searchViewModel.getLimit();
+        if (searchViewModel.getTotalHouses() % searchViewModel.getLimit() != 0)  totalPage++;
+        pg.setPageCount(totalPage);
+        pg.setCurrentPageIndex(searchViewModel.getOffset() / searchViewModel.getLimit());
         Task<Void> task = new Task<Void>() {
 
             @Override
@@ -125,8 +129,8 @@ public class SearchView extends ScrollPane {
                             final int j = i;
                             listHousesContainer.get(i).update(houses.get(i));
                             Platform.runLater(() -> {
-                                container.getChildren().add(listHousesContainer.get(j));
-                                // container.getChildren().add(j + 2, listHousesContainer.get(j));
+                                // container.getChildren().add(listHousesContainer.get(j));
+                                container.getChildren().add(j + 2, listHousesContainer.get(j));
                             });
                         }
                     }

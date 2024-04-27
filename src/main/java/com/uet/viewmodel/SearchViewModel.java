@@ -131,11 +131,13 @@ public class SearchViewModel {
                 }
                 if (needAND) temp.append("and ");
                 else temp.append("where ");
-                temp.append("isPublic = 1 ORDER BY requiringDate DESC LIMIT ").append(String.valueOf(offset)).append(",").append(limit).append(";");
+                temp.append("isPublic = 1 ORDER BY requiringDate DESC, id ASC");
+                String countSt = temp.toString() + ";";
+                temp.append(" LIMIT ").append(String.valueOf(offset)).append(",").append(limit).append(";");
                 try {
                     String t = temp.toString();
-                    System.out.println(t);
                     PreparedStatement pst = createPreparedStatement(t);
+                    System.out.println(pst.toString());
                     if (hasKeyword) {
                         pst.setString(1, curParameter.getKeyWord());
                     }
@@ -146,7 +148,8 @@ public class SearchViewModel {
                         count++;
                         updateProgress(count, limit);
                     }
-                    PreparedStatement st = createPreparedStatement(t.replace("*", "count(*)"));
+                    PreparedStatement st = createPreparedStatement(countSt.replace("*", "count(*)"));
+                    System.out.println(st.toString());
                     if (hasKeyword) {
                         st.setString(1, curParameter.getKeyWord());
                     }

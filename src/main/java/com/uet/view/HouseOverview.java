@@ -232,6 +232,9 @@ public class HouseOverview extends VBox {
             } catch (Exception e) {
                 image = new Image(App.class.getResource("imageError.png").toString());
             }
+            if (image.errorProperty().get()) {
+                image = new Image(App.class.getResource("imageError.png").toString());
+            }
             if (image.getWidth() * 3 < image.getHeight() * 4) {
                 var pr = image.getPixelReader();
                 image = new WritableImage(pr, 0, (int)(image.getHeight() - (image.getWidth()*3)/ 4 ) / 2, (int)image.getWidth(), (int) ((image.getWidth()*3)/ 4));
