@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.effect.DropShadow;
@@ -83,9 +84,14 @@ public class HouseOverview extends VBox {
         this.setStyle("-fx-background-color:white;-fx-background-radius:10;");
         this.setOnMouseEntered(e -> {
             shadow.setColor(Color.BLACK);
+            this.getScene().setCursor(Cursor.HAND);
         });
         this.setOnMouseExited(e -> {
             shadow.setColor(Color.GRAY);
+            this.getScene().setCursor(Cursor.DEFAULT);
+        });
+        this.setOnMouseClicked(e -> {
+            ContentManagement.getInstance().addHouseView(this.house);
         });
     }
     public void update(House n) {

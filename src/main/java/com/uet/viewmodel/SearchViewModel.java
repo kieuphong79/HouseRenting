@@ -51,7 +51,8 @@ public class SearchViewModel {
                 if (!curParameter.getKeyWord().isEmpty())  {
                     hasKeyword = true;
                     temp.append("where ");
-                    temp.append("match(title, description) against (?) ");
+                    // temp.append("match(title, description) against (?) ");
+                    temp.append("match(title) against (?) ");
                     needAND = true;
                 }
                 if(curParameter.getTypeOfHouse() != HouseType.ALL) {
@@ -131,7 +132,10 @@ public class SearchViewModel {
                 }
                 if (needAND) temp.append("and ");
                 else temp.append("where ");
-                temp.append("isPublic = 1 ORDER BY requiringDate DESC, id ASC");
+                if (hasKeyword) {
+                    temp.append("isPublic = 1");
+                } else temp.append("isPublic = 1 ORDER BY requiringDate DESC, id ASC");
+                                
                 String countSt = temp.toString() + ";";
                 temp.append(" LIMIT ").append(String.valueOf(offset)).append(",").append(limit).append(";");
                 try {
@@ -140,6 +144,7 @@ public class SearchViewModel {
                     System.out.println(pst.toString());
                     if (hasKeyword) {
                         pst.setString(1, curParameter.getKeyWord());
+                        System.out.println(pst.toString());
                     }
                     int count = 0;
                     ResultSet resultSet = pst.executeQuery();

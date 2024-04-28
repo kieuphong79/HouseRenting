@@ -81,9 +81,7 @@ public class MenuView extends ModalPane{
          e.consume();
       });
       searchWrapper.setOnMouseClicked((e) -> {
-         //todo: nhac 
-          BaseViewModel temp = ((BaseView) this.getParent()).getBaseViewModel();
-          temp.curCategortStringProperty().set("Search");
+          ContentManagement.getInstance().showFunction(ContentManagement.SEARCH_FUNCTION);
           close();
           e.consume();
       });

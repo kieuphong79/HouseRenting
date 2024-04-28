@@ -24,7 +24,7 @@ public class House {
             String houseType = rs.getString("houseType");
             HouseType actualHouseType = null;
             if (houseType.equals("BEDSIT")) actualHouseType = HouseType.BEDSIT;
-            else if (houseType.equals("APARTEMENT")) actualHouseType = HouseType.APARTMENT;
+            else if (houseType.equals("APARTMENT")) actualHouseType = HouseType.APARTMENT;
             else if (houseType.equals("HOUSE_LAND")) actualHouseType = HouseType.HOUSE_LAND;
             int isPublic = rs.getInt("isPublic");
             Date requiringDate = rs.getDate("requiringDate");

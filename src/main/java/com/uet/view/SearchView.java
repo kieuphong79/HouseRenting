@@ -98,6 +98,7 @@ public class SearchView extends ScrollPane {
                 this.update();
             }
         });
+        
     }
     public SearchBar getSearchBar() {
         return searchBar;

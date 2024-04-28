@@ -25,6 +25,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -46,6 +48,7 @@ public class BaseView extends StackPane {
     private Text curCategoryText;
 
     private VBox baseContainer ;
+    private ContentManagement cm;
     private BaseViewModel baseViewModel;
     private MenuView menuView; 
     private StringProperty curCartegory;
@@ -56,21 +59,26 @@ public class BaseView extends StackPane {
         baseViewModel = new BaseViewModel("Search");
         menuView = new MenuView();
        curCartegory = new SimpleStringProperty("để cho có");
+
+        cm = ContentManagement.getInstance();
+        VBox.setVgrow(cm, Priority.ALWAYS);
+
         // todo: listen to change content
-        curCartegory.addListener((obs, old, neww) -> {
-            if (old.equals(neww)) return;
-            if (neww.equals("Search")) {
-                curCategoryText.setText(curCartegory.get());
-                SearchView searchView = new SearchView();
-                baseContainer.getChildren().addAll(searchView.getSearchBar(), searchView);
-                // setContent(new SearchView());
-            }
-            else if (neww.equals("HouseView")) {
-                setContent(new HouseView());
-                curCategoryText.setText(curCartegory.get());
-                
-            }
-        });
+        // curCartegory.addListener((obs, old, neww) -> {
+        //     if (old.equals(neww)) return;
+        //     if (neww.equals("Search")) {
+        //         curCategoryText.setText(curCartegory.get());
+        //         SearchView searchView = new SearchView();
+        //         // baseContainer.getChildren().addAll(searchView.getSearchBar(), tabPane);
+        //         baseContainer.getChildren().addAll();
+        //         tabPane.getTabs().add(new Tab("Search", new VBox(searchView.getSearchBar(), searchView)));
+        //         // setContent(new SearchView());
+        //     }
+        //     else if (neww.equals("HouseView")) {
+        //         setContent(new HouseView());
+        //         curCategoryText.setText(curCartegory.get());
+        //     }
+        // });
 
         //LeftHeader        
         HBox leftHeader = getLeftHeader();
@@ -117,7 +125,7 @@ public class BaseView extends StackPane {
 
         Separator headerSeparator = getHeaderSeparator();
         
-        baseContainer = new VBox(headerContainer, headerSeparator, progressBar);
+        baseContainer = new VBox(headerContainer, headerSeparator, progressBar, cm);
         // baseContainer.setStyle("-fx-background-color: blue;");
         this.getChildren().addAll(menuView, baseContainer);
         
