@@ -103,8 +103,8 @@ public class SearchBarViewModel {
                     return res;
 
                 } catch (SQLException e) {
-                    //todo seperate 
-                    // BaseView.getInstance().createMessage("Danger", "Không có kết nối tới Database");
+                    //todo seperate: done 
+                    BaseView.getInstance().createMessage("Danger", "Không có kết nối tới Database");
                 }
                 return res;
             }
@@ -136,8 +136,8 @@ public class SearchBarViewModel {
                     return res;
 
                 } catch (SQLException e) {
-                    //todo
-                    // BaseView.getInstance().createMessage("Danger", "Không có kết nối tới Database");
+                    //todo: done
+                    BaseView.getInstance().createMessage("Danger", "Không có kết nối tới Database");
                 }
                 return res;
             };
@@ -170,8 +170,8 @@ public class SearchBarViewModel {
                     return res;
 
                 } catch (SQLException e) {
-                    //todo
-                    // BaseView.getInstance().createMessage("Danger", "Không có kết nối tới Database");
+                    //todo: done could be error
+                    BaseView.getInstance().createMessage("Danger", "Không có kết nối tới Database");
                 }
                 return res;
                 

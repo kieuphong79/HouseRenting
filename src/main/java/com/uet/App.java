@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import com.uet.model.MysqlConnector;
 import com.uet.view.BaseView;
+import com.uet.view.ContentManagement;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -19,6 +20,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         Application.setUserAgentStylesheet(App.class.getResource("primer-light.css").toString());
         Scene scene = new Scene(BaseView.getInstance());
+        ContentManagement.getInstance().addSearchTab();
         stage.setScene(scene);
         stage.setMaximized(true);
         try {

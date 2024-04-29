@@ -181,10 +181,10 @@ public class SearchViewModel {
                 // //debug
             }
         };
-        System.out.println("start thread");
         st.setOnSucceeded(e -> {
             housesChanged.set(true);
         });
+        System.out.println("start thread");
         st.startInThread();
         // st.execute();
         return;

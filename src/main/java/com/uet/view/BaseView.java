@@ -9,7 +9,6 @@ import org.kordamp.ikonli.material2.Material2OutlinedAL;
 import org.kordamp.ikonli.material2.Material2OutlinedMZ;
 
 import com.uet.App;
-import com.uet.viewmodel.BaseViewModel;
 
 import atlantafx.base.controls.Message;
 import atlantafx.base.theme.Styles;
@@ -45,52 +44,27 @@ public class BaseView extends StackPane {
         return singleton;
     }
     //changeable components
-    private Text curCategoryText;
 
     private VBox baseContainer ;
     private ContentManagement cm;
-    private BaseViewModel baseViewModel;
     private MenuView menuView; 
-    private StringProperty curCartegory;
     private ProgressBar progressBar;
     public BaseView() {
         //initialize
         super();
-        baseViewModel = new BaseViewModel("Search");
         menuView = new MenuView();
-       curCartegory = new SimpleStringProperty("để cho có");
 
         cm = ContentManagement.getInstance();
         VBox.setVgrow(cm, Priority.ALWAYS);
-
-        // todo: listen to change content
-        // curCartegory.addListener((obs, old, neww) -> {
-        //     if (old.equals(neww)) return;
-        //     if (neww.equals("Search")) {
-        //         curCategoryText.setText(curCartegory.get());
-        //         SearchView searchView = new SearchView();
-        //         // baseContainer.getChildren().addAll(searchView.getSearchBar(), tabPane);
-        //         baseContainer.getChildren().addAll();
-        //         tabPane.getTabs().add(new Tab("Search", new VBox(searchView.getSearchBar(), searchView)));
-        //         // setContent(new SearchView());
-        //     }
-        //     else if (neww.equals("HouseView")) {
-        //         setContent(new HouseView());
-        //         curCategoryText.setText(curCartegory.get());
-        //     }
-        // });
 
         //LeftHeader        
         HBox leftHeader = getLeftHeader();
 
         Button menuButton = getMenuButton();
 
-        //todo: thay doi theo lua chon cua menu
-        curCategoryText = new Text(curCartegory.get());
-        curCategoryText.getStyleClass().addAll(Styles.TITLE_4, Styles.TEXT_NORMAL);
         
         ImageView imageView = getLogoImage();
-        leftHeader.getChildren().addAll(menuButton, imageView, curCategoryText);
+        leftHeader.getChildren().addAll(menuButton, imageView);
         //rightHeader
         HBox rightHeader = getRightHeader();
 
@@ -142,8 +116,6 @@ public class BaseView extends StackPane {
         );  
         
         //binding
-        // baseViewModel.curCategortStringProperty().bind(curCartegory);
-        curCartegory.bindBidirectional(baseViewModel.curCategortStringProperty());
     }
     private Separator getHeaderSeparator() {
         Separator headerSeparator = new Separator();
@@ -193,17 +165,6 @@ public class BaseView extends StackPane {
     }
 
     
-    public void setContent(Node node) {
-        //todo navigator mangaement
-        int sizeChildern = baseContainer.getChildren().size();
-        if ( sizeChildern == 2) {
-            baseContainer.getChildren().add(node);
-        } else if (sizeChildern == 3) {
-            baseContainer.getChildren().remove(2);
-            baseContainer.getChildren().add(node);
-        } else throw new RuntimeException("baseConatiner kich co khong phu hop");
-    }
-    public BaseViewModel getBaseViewModel() {return baseViewModel;}
     public ProgressBar getProgressBar() {return progressBar;}
     
     public void createMessage(String type, String message) {
@@ -230,11 +191,11 @@ public class BaseView extends StackPane {
         mes.setMaxSize(USE_PREF_SIZE, USE_PREF_SIZE); 
         mes.setOnClose(e -> {
             var out = Animations.slideOutUp(mes, Duration.millis(250));
-            out.setOnFinished(e1 -> getChildren().remove(mes));
+            out.setOnFinished(e1 -> this.getChildren().remove(mes));
             out.playFromStart();
         });
         var in = Animations.slideInDown(mes, Duration.millis(250));
-        getChildren().add(mes);
+        this.getChildren().add(mes);
         in.playFromStart();
         StackPane.setAlignment(mes, Pos.TOP_RIGHT);
         StackPane.setMargin(mes, new Insets(10, 10, 0, 0));

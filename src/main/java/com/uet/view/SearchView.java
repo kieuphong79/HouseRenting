@@ -98,14 +98,12 @@ public class SearchView extends ScrollPane {
                 this.update();
             }
         });
-        
     }
     public SearchBar getSearchBar() {
         return searchBar;
     }
     public void update() {
         this.setVvalue(0);
-        //todo seperate data and view, show if no result
         List<House> houses = searchViewModel.getHouses();
         container.getChildren().retainAll(textResult, totalText, pg);
         textResult.setText(searchViewModel.getSearchInformation());
@@ -147,6 +145,9 @@ public class SearchView extends ScrollPane {
         // });
         MultiThread.execute(task);
         System.out.println("update succesfully");
+    }
+    public SearchViewModel getSearchViewModel() {
+        return searchViewModel;
     }
     
 }

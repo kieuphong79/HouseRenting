@@ -10,6 +10,7 @@ import org.kordamp.ikonli.material2.Material2MZ;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
 
 import com.uet.model.House;
+import com.uet.model.SearchParameter;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -17,7 +18,6 @@ import javafx.scene.layout.VBox;
 
 public class ContentManagement extends TabPane {
     public static final int SEARCH_FUNCTION = -1;
-    private static final int DEFAULT_FUNCTION = SEARCH_FUNCTION;
     private static ContentManagement singleton;
     public static ContentManagement getInstance() {
         if (singleton == null) singleton = new ContentManagement();
@@ -28,11 +28,15 @@ public class ContentManagement extends TabPane {
         super();
         funtionTabCache = new Hashtable<>();
         this.setTabMaxWidth(200);
-        addSearchTab();
         this.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
     }
-    private void addSearchTab() {
+    public void addSearchTab() {
         var searchView = new SearchView();
+        var searchViewModel = searchView.getSearchViewModel();
+        searchViewModel.setOffset(0);
+        SearchParameter t = new SearchParameter(searchView.getSearchBar().getSearchBarViewModel());
+        searchViewModel.setSearchParameter(t);
+        searchViewModel.search();
         Tab searchTab = new Tab("Tìm kiếm", new VBox(searchView.getSearchBar(), searchView));
         FontIcon si = new FontIcon(Material2MZ.SEARCH);
         si.setIconSize(20);
