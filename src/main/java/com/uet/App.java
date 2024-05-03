@@ -3,6 +3,8 @@ package com.uet;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import com.uet.exception.LoginErrorException;
+import com.uet.model.GoogleOauthLogin;
 import com.uet.model.MysqlConnector;
 import com.uet.view.BaseView;
 import com.uet.view.ContentManagement;
@@ -28,6 +30,28 @@ public class App extends Application {
         } catch(SQLException e) {
             BaseView.getInstance().createMessage("Danger", "Không thể kết nối tới database server");
         }
+        GoogleOauthLogin gl = null;
+        try {
+            gl = new GoogleOauthLogin();
+            gl.login();
+        } catch (LoginErrorException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("sleep");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        try {
+            gl.login();
+        } catch (LoginErrorException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         stage.show();
     }
 
