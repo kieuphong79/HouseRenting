@@ -18,6 +18,7 @@ import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -32,6 +33,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -119,7 +122,7 @@ public class BaseView extends StackPane {
     }
     private Separator getHeaderSeparator() {
         Separator headerSeparator = new Separator();
-        headerSeparator.setStyle("-fx-background-color: -color-base-1;");
+        headerSeparator.setStyle("-fx-background-color: -color-base-0;");
         headerSeparator.setValignment(VPos.BOTTOM);
         headerSeparator.getStyleClass().addAll(Styles.SMALL);
         return headerSeparator;
@@ -133,7 +136,24 @@ public class BaseView extends StackPane {
         return headerContainer;
     }
     private HBox getRightHeader() {
-        HBox rightHeader = new HBox();
+        Button uploadButton = new Button("Đăng tin");
+        uploadButton.setFont(Font.font("Times", FontWeight.SEMI_BOLD, 15));
+        uploadButton.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.LARGE, Styles.DANGER );
+
+        // Button signUpButton = new Button("Đăng ký");
+        // signUpButton.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 15));
+        // signUpButton.getStyleClass().addAll(Styles.FLAT, Styles.LARGE);
+
+        Button signInButton = new Button("Đăng nhập");
+        signInButton.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 15));
+        signInButton.getStyleClass().addAll(Styles.FLAT, Styles.LARGE);
+
+        var separator = new Separator(Orientation.VERTICAL);
+        separator.getStyleClass().addAll(Styles.SMALL);
+
+        HBox rightHeader = new HBox(signInButton, separator,/* signUpButton,*/ uploadButton);
+        rightHeader.setPadding(new Insets(10, 10, 10, 0));
+        rightHeader.setSpacing(10);
         rightHeader.setAlignment(Pos.CENTER_RIGHT);
         HBox.setHgrow(rightHeader, Priority.ALWAYS);
         return rightHeader;

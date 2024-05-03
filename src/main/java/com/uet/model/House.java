@@ -8,7 +8,7 @@ import java.sql.SQLException;
 public class House {
     public static House getHouseFromResultSet(ResultSet rs) throws SQLException {
             int id = rs.getInt("id");
-            String username = rs.getString("username");
+            String userID = rs.getString("userID");
             String title = rs.getString("title");
             int price = rs.getInt("price");
             String description = rs.getString("description");
@@ -28,7 +28,7 @@ public class House {
             else if (houseType.equals("HOUSE_LAND")) actualHouseType = HouseType.HOUSE_LAND;
             int isPublic = rs.getInt("isPublic");
             Date requiringDate = rs.getDate("requiringDate");
-            return new House(id, username, title, price, description, new Address(address, city, district, street), numberOfBedrooms,
+            return new House(id, userID, title, price, description, new Address(address, city, district, street), numberOfBedrooms,
                 numberOfKitchens, numberOfToilets, area, imagesURL, actualHouseType, isPublic, requiringDate);
        
 
@@ -90,7 +90,7 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
         return houseType;
     }
     private String title;
-    private String userName;
+    private String userID;
     private int price;
     private String descirption;
     private Address specAddress;
@@ -105,7 +105,7 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
     public House(int id, String userName, String title, int price, String descirption, Address specAddress, int numBedrooms,
             int numKitchens, int numToilets, float area, String imagesUrl, HouseType houseType, int isPublic, Date date) {
         this.id = id;
-        this.userName = userName;
+        this.userID = userName;
         this.title = title;
         this.price = price;
         this.descirption = descirption;
