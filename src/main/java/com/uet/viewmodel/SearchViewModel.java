@@ -153,6 +153,7 @@ public class SearchViewModel {
                         count++;
                         updateProgress(count, limit);
                     }
+                    pst.close();
                     PreparedStatement st = createPreparedStatement(countSt.replace("*", "count(*)"));
                     System.out.println(st.toString());
                     if (hasKeyword) {
@@ -162,6 +163,7 @@ public class SearchViewModel {
                     while(rs.next()) {
                         total = rs.getInt(1);
                     }
+                    st.close();
                     updateProgress(1, 1);
                     System.out.println("done thread for search");
                     return null;

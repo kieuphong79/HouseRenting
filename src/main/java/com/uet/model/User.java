@@ -44,4 +44,7 @@ public class User {
         sdt = s;
     }
     public String getSDT() {return sdt;}
+    public boolean halfEquals(User that) {
+        return this.name == that.name && this.pictureURL == that.pictureURL;
+    }
 }

@@ -100,6 +100,7 @@ public class SearchBarViewModel {
                     while (resultSet.next()) {
                         res.add(resultSet.getString(1));
                     }
+                    statement.close();
                     return res;
 
                 } catch (SQLException e) {
@@ -133,6 +134,7 @@ public class SearchBarViewModel {
                     while (resultSet.next()) {
                         res.add(resultSet.getString(1));
                     }
+                    statement.close();
                     return res;
 
                 } catch (SQLException e) {
@@ -167,6 +169,7 @@ public class SearchBarViewModel {
                     while (resultSet.next()) {
                         res.add(resultSet.getString(1));
                     }
+                    statement.close();
                     return res;
 
                 } catch (SQLException e) {

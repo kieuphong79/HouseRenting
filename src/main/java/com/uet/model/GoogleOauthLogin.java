@@ -183,7 +183,7 @@ public class GoogleOauthLogin {
             serverSocket.close();
         } 
         serverSocket = new ServerSocket(PORT);
-        serverSocket.setSoTimeout(10000);
+        serverSocket.setSoTimeout(60000);
         Socket clientSocket = null;
         try {
             clientSocket = serverSocket.accept();
