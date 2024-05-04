@@ -2,6 +2,7 @@ package com.uet.view;
 
 
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
 
@@ -9,18 +10,24 @@ import com.uet.App;
 import com.uet.model.House;
 import com.uet.threads.MultiThread;
 
+import atlantafx.base.controls.Tile;
 import atlantafx.base.theme.Styles;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Separator;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -36,8 +43,10 @@ public class HouseOverview extends VBox {
     private Label numOfBedroomsLabel;
     private Label addressText;
     private Label desText;
-
     private House house;
+    private Tile userTile;
+    //user independent component
+    private Button favoriteButton;
 
     public HouseOverview() {
         super();
@@ -65,7 +74,7 @@ public class HouseOverview extends VBox {
         addressText.getStyleClass().addAll(Styles.TEXT, Styles.TEXT_SUBTLE);
         addressText.setMaxWidth(400);
         var icon = new FontIcon(Material2OutlinedAL.LOCATION_ON);
-        icon.setIconSize(20);
+        icon.setIconSize(30);
         addressText.setGraphic(icon);
 
         desText = new Label();
@@ -77,7 +86,21 @@ public class HouseOverview extends VBox {
         information.getChildren().addAll(title, hbox1, addressText, desText);
 
         container.getChildren().addAll(imagesContainer, information);
-        this.getChildren().addAll(container);
+
+        userTile = new Tile();
+        ImageView avatar = new ImageView();
+        avatar.setPreserveRatio(true);
+        avatar.setFitWidth(40);
+        userTile.setGraphic(avatar);
+
+        favoriteButton = new Button();
+        favoriteButton.getStyleClass().addAll(Styles.BUTTON_CIRCLE, Styles.FLAT);
+        var favoriteIcon = new FontIcon(Material2AL.FAVORITE_BORDER);
+        favoriteIcon.setIconSize(40);
+        userTile.setAction(favoriteIcon);
+        var sep = new Separator();
+        sep.getStyleClass().addAll(Styles.SMALL);
+        this.getChildren().addAll(container,sep, userTile);
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.GRAY);
         this.setEffect(shadow);
@@ -93,6 +116,7 @@ public class HouseOverview extends VBox {
         this.setOnMouseClicked(e -> {
             ContentManagement.getInstance().addHouseView(this.house);
         });
+        
     }
     public void update(House n) {
         house = n;
@@ -103,6 +127,11 @@ public class HouseOverview extends VBox {
         numOfBedroomsLabel.setText(String.valueOf(house.getNumBedrooms()));
         addressText.setText(house.getSpecAddress().toString());
         desText.setText(house.getDescirption());
+
+        userTile.setTitle(house.getUser().getName());
+        ImageView temp = (ImageView)userTile.getGraphic();
+        temp.setImage(new Image(house.getUser().getPictureURL()));
+        //todo favorite Button
     }
 
 

@@ -9,6 +9,7 @@ import org.kordamp.ikonli.material2.Material2OutlinedAL;
 import org.kordamp.ikonli.material2.Material2OutlinedMZ;
 
 import com.uet.App;
+import com.uet.model.UserControl;
 
 import atlantafx.base.controls.Message;
 import atlantafx.base.theme.Styles;
@@ -38,7 +39,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-public class BaseView extends StackPane {
+public class BaseView extends StackPane implements UserUpdate{
     private static BaseView singleton;
     public static BaseView getInstance() {
         if (singleton == null) {
@@ -52,6 +53,8 @@ public class BaseView extends StackPane {
     private ContentManagement cm;
     private MenuView menuView; 
     private ProgressBar progressBar;
+    
+    private HBox rightHeader;
     public BaseView() {
         //initialize
         super();
@@ -69,8 +72,9 @@ public class BaseView extends StackPane {
         ImageView imageView = getLogoImage();
         leftHeader.getChildren().addAll(menuButton, imageView);
         //rightHeader
-        HBox rightHeader = getRightHeader();
-
+        rightHeader = new HBox();
+        HBox.setHgrow(rightHeader, Priority.ALWAYS);
+        update(UserControl.getInstance().hasLogged());
         //processbar 
         progressBar = new ProgressBar(0); 
         progressBar.setMaxWidth(2000);
@@ -135,7 +139,8 @@ public class BaseView extends StackPane {
         // headerContainer.setStyle("-fx-background-color: red;");
         return headerContainer;
     }
-    private HBox getRightHeader() {
+    //user independent component
+    private HBox getLogoutRightHeader() {
         Button uploadButton = new Button("Đăng tin");
         uploadButton.setFont(Font.font("Times", FontWeight.SEMI_BOLD, 15));
         uploadButton.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.LARGE, Styles.DANGER );
@@ -151,12 +156,16 @@ public class BaseView extends StackPane {
         var separator = new Separator(Orientation.VERTICAL);
         separator.getStyleClass().addAll(Styles.SMALL);
 
-        HBox rightHeader = new HBox(signInButton, separator,/* signUpButton,*/ uploadButton);
-        rightHeader.setPadding(new Insets(10, 10, 10, 0));
-        rightHeader.setSpacing(10);
-        rightHeader.setAlignment(Pos.CENTER_RIGHT);
-        HBox.setHgrow(rightHeader, Priority.ALWAYS);
-        return rightHeader;
+        HBox temp = new HBox(signInButton, separator,/* signUpButton,*/ uploadButton);
+        temp.setPadding(new Insets(10, 10, 10, 0));
+        temp.setSpacing(10);
+        temp.setAlignment(Pos.CENTER_RIGHT);
+        HBox.setHgrow(temp, Priority.ALWAYS);
+        return temp;
+    }
+    private HBox getLoggedRightHeader() {
+        //todo
+        return new HBox(new Text("Logged"));
     }
     private ImageView getLogoImage() {
         ImageView imageView = new ImageView(App.class.getResource("logo.png").toString());
@@ -220,6 +229,16 @@ public class BaseView extends StackPane {
         StackPane.setAlignment(mes, Pos.TOP_RIGHT);
         StackPane.setMargin(mes, new Insets(10, 10, 0, 0));
     
+    }
+    @Override
+    public void update(boolean isLogged) {
+        if (isLogged) {
+            rightHeader.getChildren().clear();
+            rightHeader.getChildren().add(getLogoutRightHeader());
+        } else  {
+            rightHeader.getChildren().clear();
+            rightHeader.getChildren().add(getLoggedRightHeader());
+        }
     }
     
 }

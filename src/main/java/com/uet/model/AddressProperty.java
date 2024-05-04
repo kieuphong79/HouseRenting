@@ -1,9 +1,5 @@
 package com.uet.model;
 
-import java.util.IntSummaryStatistics;
-
-import com.mysql.cj.xdevapi.AddResult;
-
 import javafx.beans.property.SimpleStringProperty;
 
 public class AddressProperty {

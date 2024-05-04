@@ -34,15 +34,11 @@ public class HouseView extends ScrollPane{
     private House curHouse;
     private HouseViewModel houseViewModel;
     
-    //changeable components
 
 
     public HouseView(House house) {
-        //Test 
         super();
         curHouse = house;
-        // curHouse = House.sample; 
-        //
         //initialize 
         houseViewModel = new HouseViewModel();
         ImageShower imageShower = new ImageShower(curHouse.getImagesUrl());
@@ -58,6 +54,7 @@ public class HouseView extends ScrollPane{
         HBox overallInformation = new HBox(creatInforVBox("Mức giá", curHouse.getPriceAsString()),
          creatInforVBox("Diện tích", String.valueOf(curHouse.getArea() + " m²")), 
          creatInforVBox("Phòng ngủ", String.valueOf(curHouse.getNumBedrooms()) + " PN"));
+         //user indepentdent component
         Button favoriteButton = new Button();
         Tooltip favTooltip = new Tooltip("Save");
         favTooltip.setShowDelay(new Duration(300));

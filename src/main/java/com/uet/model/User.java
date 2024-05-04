@@ -3,12 +3,44 @@ package com.uet.model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.uet.view.BaseView;
+
+import javafx.application.Platform;
+
 public class User {
     public static User getUserFromResultSet(ResultSet rs) throws SQLException {
         var user = new User(rs.getString("userID"), rs.getString("email"), rs.getString("name"), rs.getString("pictureURL"));
         user.setCookies(rs.getString("cookies"));
         user.setSDT(rs.getString("sdt"));
         return user;
+    }
+    public static User getUserObject(String userID) {
+        DataStatement<User> task = new DataStatement<>() {
+
+            @Override
+            protected User call() throws SQLException {
+                String sql = "select * from users where userID = ?";
+                var pst = this.createPreparedStatement(sql);
+                pst.setString(1, userID);
+                var rs = pst.executeQuery();
+                while (rs.next()) {
+                    var res = getUserFromResultSet(rs);
+                    pst.close();
+                    return res;
+                }
+                throw new RuntimeException("Loi truy van khong co ket qua");
+            }
+            
+        };
+        try {
+            return task.startInMainThread();
+        } catch (SQLException e) {
+            BaseView.getInstance().createMessage("Danger", "Không thể kết nối tới database");
+        } catch (Exception e) {
+            //ko co gi de bat
+            throw new RuntimeException(e.getMessage());
+        }
+        return null;
     }
     public User(String userID, String email, String name, String pictureURL) {
         this.userID = userID;

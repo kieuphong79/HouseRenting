@@ -5,7 +5,6 @@ package com.uet.view;
 import java.util.Hashtable;
 
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
 

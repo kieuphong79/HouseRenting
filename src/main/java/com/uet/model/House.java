@@ -5,6 +5,8 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.google.api.client.auth.oauth2.DataStoreCredentialRefreshListener;
+
 public class House {
     public static House getHouseFromResultSet(ResultSet rs) throws SQLException {
             int id = rs.getInt("id");
@@ -83,11 +85,23 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
     public float getArea() {
         return area;
     }
+    public String getUserID() {
+        return userID;
+    }
+    public int getIsPublic() {
+        return isPublic;
+    }
+    public Date getDate() {
+        return date;
+    }
     public String[] getImagesUrl() {
         return imagesUrl;
     }
     public HouseType getHouseType() {
         return houseType;
+    }
+    public User getUser() {
+        return user;
     }
     private String title;
     private String userID;
@@ -102,6 +116,7 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
     private HouseType houseType;
     private int isPublic;
     private Date date;
+    private User user;
     public House(int id, String userName, String title, int price, String descirption, Address specAddress, int numBedrooms,
             int numKitchens, int numToilets, float area, String imagesUrl, HouseType houseType, int isPublic, Date date) {
         this.id = id;
@@ -118,6 +133,7 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
         this.houseType = houseType;
         this.isPublic = isPublic;
         this.date = date;
+        user = User.getUserObject(userID); //todo
     }
     
     

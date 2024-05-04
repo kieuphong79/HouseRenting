@@ -31,6 +31,7 @@ public class SearchView extends ScrollPane {
     private SearchViewModel searchViewModel;
     private SimpleBooleanProperty housesChanged;
     private VBox container;
+    //user independent component
     private List<HouseOverview> listHousesContainer;
     private Text textResult;
     private ImageView noResultImage;

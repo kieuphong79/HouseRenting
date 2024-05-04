@@ -5,7 +5,6 @@ import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
 
 import com.uet.App;
-import com.uet.viewmodel.BaseViewModel;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
@@ -13,13 +12,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class MenuView extends ModalPane{
