@@ -14,8 +14,6 @@ import com.uet.model.UserControl;
 import atlantafx.base.controls.Message;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Insets;
@@ -28,6 +26,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -47,17 +46,19 @@ public class BaseView extends StackPane implements UserUpdate{
         } 
         return singleton;
     }
-    //changeable components
 
     private VBox baseContainer ;
     private ContentManagement cm;
     private MenuView menuView; 
     private ProgressBar progressBar;
-    
+
+   //user independent 
     private HBox rightHeader;
+
     public BaseView() {
         //initialize
         super();
+        System.out.println("BaseView init");
         menuView = new MenuView();
 
         cm = ContentManagement.getInstance();
@@ -139,9 +140,9 @@ public class BaseView extends StackPane implements UserUpdate{
         // headerContainer.setStyle("-fx-background-color: red;");
         return headerContainer;
     }
-    //user independent component
     private HBox getLogoutRightHeader() {
         Button uploadButton = new Button("Đăng tin");
+        uploadButton.setTooltip(new Tooltip("Đăng nhập đế sử dụng chức năng này"));
         uploadButton.setFont(Font.font("Times", FontWeight.SEMI_BOLD, 15));
         uploadButton.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.LARGE, Styles.DANGER );
 
@@ -150,9 +151,10 @@ public class BaseView extends StackPane implements UserUpdate{
         // signUpButton.getStyleClass().addAll(Styles.FLAT, Styles.LARGE);
 
         Button signInButton = new Button("Đăng nhập");
+        signInButton.setOnAction(e -> UserControl.getInstance().login());
         signInButton.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 15));
         signInButton.getStyleClass().addAll(Styles.FLAT, Styles.LARGE);
-
+        
         var separator = new Separator(Orientation.VERTICAL);
         separator.getStyleClass().addAll(Styles.SMALL);
 
@@ -234,10 +236,10 @@ public class BaseView extends StackPane implements UserUpdate{
     public void update(boolean isLogged) {
         if (isLogged) {
             rightHeader.getChildren().clear();
-            rightHeader.getChildren().add(getLogoutRightHeader());
+            rightHeader.getChildren().add(getLoggedRightHeader());
         } else  {
             rightHeader.getChildren().clear();
-            rightHeader.getChildren().add(getLoggedRightHeader());
+            rightHeader.getChildren().add(getLogoutRightHeader());
         }
     }
     

@@ -10,6 +10,7 @@ import org.kordamp.ikonli.material2.Material2AL;
 import com.uet.App;
 import com.uet.model.House;
 import com.uet.model.SearchParameter;
+import com.uet.model.UserControl;
 import com.uet.threads.MultiThread;
 import com.uet.viewmodel.SearchViewModel;
 
@@ -26,18 +27,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class SearchView extends ScrollPane {
+public class SearchView extends ScrollPane implements UserUpdate{
     private SearchBar searchBar;
     private SearchViewModel searchViewModel;
     private SimpleBooleanProperty housesChanged;
     private VBox container;
-    //user independent component
-    private List<HouseOverview> listHousesContainer;
     private Text textResult;
     private ImageView noResultImage;
     private Button resetButton;
     private Text totalText;
     private Pagination pg;
+
+    //user independent component
+    private List<HouseOverview> listHousesContainer;
+
     public SearchView() {
         super();
         searchBar = new SearchBar();
@@ -149,6 +152,10 @@ public class SearchView extends ScrollPane {
     }
     public SearchViewModel getSearchViewModel() {
         return searchViewModel;
+    }
+    @Override
+    public void update(boolean isLogged) {
+        for (HouseOverview i : listHousesContainer) i.update(UserControl.getInstance().hasLogged());
     }
     
 }

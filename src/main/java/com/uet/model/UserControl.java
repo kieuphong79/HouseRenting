@@ -5,19 +5,25 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+
 
 import com.google.api.client.util.store.DataStore;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.uet.exception.CookiesErrorException;
 import com.uet.exception.LoginErrorException;
+import com.uet.exception.LogouErrorException;
 import com.uet.threads.MultiThread;
 import com.uet.view.BaseView;
+import com.uet.view.ContentManagement;
+import com.uet.view.UserUpdate;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class UserControl {
+public class UserControl implements UserUpdate {
     private static final String DATA_STORE_DIR = System.getProperty("user.home") + File.separator + ".houserenting";
     private static final String DATA_STORE_USER = "userCookies";
     private static String CHAR_PATTERN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -34,8 +40,13 @@ public class UserControl {
     private User currentUser;
     private boolean hasLogged;
 
+    private FavoriteControl favoriteControl;
+
     public UserControl() {
         try {
+            System.out.println("user control init");
+            favoriteControl = FavoriteControl.getInstance();
+            
             dataStore = new FileDataStoreFactory(new File(DATA_STORE_DIR)).getDataStore("cookies");
             storedCookies =  dataStore.get(DATA_STORE_USER); // if not exist cookies, cookies = null
             hasLogged = false;
@@ -51,6 +62,7 @@ public class UserControl {
                    dataStore.delete(DATA_STORE_USER);
                 }
             }
+            if (currentUser != null) favoriteControl.addFavoriteList(fetchFavoriteList()); ;
         } catch (IOException e) {
             throw new RuntimeException("Error dataStore");
         }
@@ -88,7 +100,30 @@ public class UserControl {
         }
 
     }
+    private List<Integer> fetchFavoriteList() {
+        DataStatement<List<Integer>> st = new DataStatement<>() {
+            @Override
+            protected List<Integer> call() throws Exception {
+                List<Integer> res = new ArrayList<>();
+                String sql = "Select id from favorite where userID = ?";
+                var pst = this.createPreparedStatement(sql);
+                pst.setString(1, currentUser.getUserID());
+                var rs = pst.executeQuery();
+                while (rs.next()) {
+                    res.add(rs.getInt("id"));
+                }
+                return res;
+            }
+        };
+        try {
+            return st.startInMainThread();
+        } catch (Exception e) {
+            //ko co gi de bat
+            throw new RuntimeException("lỗi truy vấn usercontrol");
+        }
+    }
     public void login() {
+        System.out.println("start login");
         var loginOauth = new GoogleOauthLogin();
         Task<Void> task = new Task<>() {
 
@@ -168,20 +203,41 @@ public class UserControl {
                     }
                     //fetch cookies, store locally
                     dataStore.set(DATA_STORE_USER, res.getCookies());
+                    System.out.println("cookie is stored successfully");
                     currentUser = res;
                     hasLogged = true;
+                    return null;
                 } catch (LoginErrorException | IOException e) {
+                    //debug
                     Platform.runLater(() -> {
                         BaseView.getInstance().createMessage("Danger", "Lỗi đăng nhập hãy thử đăng nhập lại");
                     });
                     currentUser = null;
                     hasLogged = false;
-                } 
-                return null;
+                }
+                // prevent success state
+                throw new RuntimeException("stop thread");
             }
             
         };
+        task.setOnSucceeded(e -> {
+            System.out.println("login successfully, update");
+            favoriteControl.addFavoriteList(fetchFavoriteList());
+            update(hasLogged);
+        });
+        System.out.println("debu start thread");
         MultiThread.execute(task);
+    }
+    public void logout() throws LogouErrorException {
+        try {
+            dataStore.delete(DATA_STORE_USER);
+        } catch (IOException e) {
+            throw new LogouErrorException("Lỗi xóa cookies");
+        }
+        currentUser = null;
+        hasLogged = false;
+        storedCookies = null;
+        update(hasLogged);
     }
     
     private String generateCookies() {
@@ -230,7 +286,7 @@ public class UserControl {
 
             @Override
             protected User call() throws Exception {
-                var sql = "select userID from users where userID = \"" + userID + "\";";
+                var sql = "select * from users where userID = \"" + userID + "\";";
                 var st = this.createStatement(); 
                 var rs = st.executeQuery(sql);
                 while(rs.next()) {
@@ -251,9 +307,46 @@ public class UserControl {
         }
     }
     public User getCurrentUser() {return currentUser;}
+    @Override
+    public void update(boolean isLogged) {
+        Task<Void> updateTask = new Task<Void>() {
+
+            @Override
+            protected Void call()  {
+                updateProgress(0, 1);
+                System.out.println("1");
+                Platform.runLater(() -> {
+                    BaseView.getInstance().update(hasLogged);
+                });
+                System.out.println(2);
+                var temp = ContentManagement.getInstance().getTabs();
+                System.out.println(3);
+                for (int i = 0; i < temp.size(); i++) {
+                    var tab = temp.get(i);
+                    if (tab.getContent() instanceof UserUpdate) {
+                        UserUpdate  t = (UserUpdate) tab.getContent();
+                        Platform.runLater(() -> {
+                            t.update(hasLogged);
+                        });
+                    }
+                    updateProgress(i, temp.size());
+                }
+                updateProgress(1, 1);
+                return null;
+            }
+            
+        };
+        //continue
+        updateTask.setOnSucceeded(e -> {
+            System.out.println("succes");
+        });
+        BaseView.getInstance().getProgressBar().progressProperty().bind(updateTask.progressProperty());
+        MultiThread.execute(updateTask);
+    }
+   
     
 
-    public static void main(String[] args) throws IOException {
-        new UserControl().generateCookies();
-    }
+    // public static void main(String[] args) throws IOException, LogouErrorException {
+    //     new UserControl().logout();
+    // }
 }

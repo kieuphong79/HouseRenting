@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import com.uet.view.BaseView;
 
-import javafx.application.Platform;
 
 public class User {
     public static User getUserFromResultSet(ResultSet rs) throws SQLException {

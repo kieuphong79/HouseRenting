@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import com.uet.exception.LoginErrorException;
+import com.uet.model.FavoriteControl;
 import com.uet.model.GoogleOauthLogin;
 import com.uet.model.MysqlConnector;
 import com.uet.model.UserControl;
@@ -32,6 +33,10 @@ public class App extends Application {
             BaseView.getInstance().createMessage("Danger", "Không thể kết nối tới database server");
         }
         UserControl.getInstance();
+        FavoriteControl.getInstance();
+        stage.setOnCloseRequest(e -> {
+            FavoriteControl.getInstance().updateToRemote();
+        });
         stage.show();
     }
 

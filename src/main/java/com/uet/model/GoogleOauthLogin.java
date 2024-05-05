@@ -70,7 +70,7 @@ public class GoogleOauthLogin {
                 // .setDataStoreFactory(new FileDataStoreFactory(new File(DATA_STORE_DIR)))
                 .build(); 
     }
-    public User login() throws LoginErrorException {
+    public User login() throws LoginErrorException, IOException {
         String authorizationUrl = flow.newAuthorizationUrl()
                 // .setRedirectUri("urn:ietf:wg:oauth:2.0:oob")
                 .setRedirectUri(REDIRECT_URL)
@@ -83,11 +83,8 @@ public class GoogleOauthLogin {
             throw new LoginErrorException(e.getMessage());
         }
         String code = "";
-        try {
-            code = listentToResponse();
-        } catch (IOException e) {
-            throw new LoginErrorException(e.getMessage());
-        }
+        code = listentToResponse();
+        
         // Task<String> task = new Task<String>() {
 
         //     @Override
@@ -166,6 +163,7 @@ public class GoogleOauthLogin {
             // System.out.println(email);
             // System.out.println(name);
             // System.out.println(pictureUrl);
+        System.out.println("done login googlea oauth");
             return new User(userId, email, name, pictureUrl);
         } else {
             throw new LoginErrorException("Lỗi id token");
@@ -183,14 +181,14 @@ public class GoogleOauthLogin {
             serverSocket.close();
         } 
         serverSocket = new ServerSocket(PORT);
-        serverSocket.setSoTimeout(60000);
+        serverSocket.setSoTimeout(10000);
         Socket clientSocket = null;
         try {
             clientSocket = serverSocket.accept();
         } catch (SocketTimeoutException e) {
             System.out.println("socket time out");
             serverSocket.close();
-            throw new LoginErrorException("time out socket");
+            throw new LoginErrorException("time out socket error");
         }
         System.out.println("Server listening on port " + PORT);
 

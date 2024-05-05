@@ -7,7 +7,10 @@ import org.kordamp.ikonli.material2.Material2MZ;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
 
 import com.uet.App;
+import com.uet.model.FavoriteControl;
 import com.uet.model.House;
+import com.uet.model.User;
+import com.uet.model.UserControl;
 import com.uet.threads.MultiThread;
 
 import atlantafx.base.controls.Tile;
@@ -35,7 +38,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-public class HouseOverview extends VBox {
+public class HouseOverview extends VBox implements UserUpdate {
     private ImageContainer imagesContainer;
     private Label title;
     private Text priceText;
@@ -94,10 +97,9 @@ public class HouseOverview extends VBox {
         userTile.setGraphic(avatar);
 
         favoriteButton = new Button();
-        favoriteButton.getStyleClass().addAll(Styles.BUTTON_CIRCLE, Styles.FLAT);
-        var favoriteIcon = new FontIcon(Material2AL.FAVORITE_BORDER);
-        favoriteIcon.setIconSize(40);
-        userTile.setAction(favoriteIcon);
+        favoriteButton.getStyleClass().addAll(Styles.FLAT, Styles.DANGER);
+        userTile.setAction(favoriteButton);
+
         var sep = new Separator();
         sep.getStyleClass().addAll(Styles.SMALL);
         this.getChildren().addAll(container,sep, userTile);
@@ -131,6 +133,8 @@ public class HouseOverview extends VBox {
         userTile.setTitle(house.getUser().getName());
         ImageView temp = (ImageView)userTile.getGraphic();
         temp.setImage(new Image(house.getUser().getPictureURL()));
+
+        update(UserControl.getInstance().hasLogged());
         //todo favorite Button
     }
 
@@ -279,6 +283,46 @@ public class HouseOverview extends VBox {
             }
             return image;
         }
+    }
+
+
+
+    @Override
+    public void update(boolean isLogged) {
+        //todo
+        if (isLogged) {
+            if (FavoriteControl.getInstance().check(house.getId())) {
+                changeToFavorite();
+            } else {
+                changeToNonFavorite();
+            }
+        } else {
+            var favoriteIcon = new FontIcon(Material2AL.FAVORITE_BORDER);
+            favoriteIcon.setIconSize(40);
+            favoriteButton.setGraphic(favoriteIcon);
+            favoriteButton.setTooltip(new Tooltip("Đăng nhập để sử dụng chức năng này."));
+        }
+    }
+    private void changeToFavorite() {
+        var favoriteIcon = new FontIcon(Material2AL.FAVORITE);
+        favoriteIcon.setIconSize(40);
+        favoriteButton.setGraphic(favoriteIcon);
+        favoriteButton.setTooltip(new Tooltip("Bỏ yêu thích"));
+        favoriteButton.setOnAction(e -> {
+            FavoriteControl.getInstance().remove(house.getId());
+            changeToNonFavorite();
+        });
+
+    }
+    private void changeToNonFavorite() {
+        var favoriteIcon = new FontIcon(Material2AL.FAVORITE_BORDER);
+        favoriteIcon.setIconSize(40);
+        favoriteButton.setGraphic(favoriteIcon);
+        favoriteButton.setTooltip(new Tooltip("Thêm yêu thích"));
+        favoriteButton.setOnAction(e -> {
+            FavoriteControl.getInstance().add(house.getId());
+            changeToFavorite();
+        });
     }
     
 }

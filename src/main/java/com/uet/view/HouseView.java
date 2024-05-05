@@ -7,7 +7,9 @@ import org.kordamp.ikonli.material2.Material2MZ;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
 
 import com.uet.App;
+import com.uet.model.FavoriteControl;
 import com.uet.model.House;
+import com.uet.model.UserControl;
 import com.uet.threads.MultiThread;
 import com.uet.viewmodel.HouseViewModel;
 
@@ -30,11 +32,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-public class HouseView extends ScrollPane{
+public class HouseView extends ScrollPane implements UserUpdate{
     private House curHouse;
     private HouseViewModel houseViewModel;
     
-
+    //user independent
+    private Button favoriteButton;
 
     public HouseView(House house) {
         super();
@@ -54,15 +57,10 @@ public class HouseView extends ScrollPane{
         HBox overallInformation = new HBox(creatInforVBox("Mức giá", curHouse.getPriceAsString()),
          creatInforVBox("Diện tích", String.valueOf(curHouse.getArea() + " m²")), 
          creatInforVBox("Phòng ngủ", String.valueOf(curHouse.getNumBedrooms()) + " PN"));
-         //user indepentdent component
-        Button favoriteButton = new Button();
-        Tooltip favTooltip = new Tooltip("Save");
-        favTooltip.setShowDelay(new Duration(300));
-        favoriteButton.setTooltip(favTooltip);
-        FontIcon favorite = new FontIcon(Material2AL.FAVORITE_BORDER);
-        favorite.setIconSize(30);
-        favoriteButton.getStyleClass().addAll(Styles.BUTTON_ICON, Styles.FLAT);
-        favoriteButton.setGraphic(favorite);
+        favoriteButton = new Button();
+        favoriteButton.getStyleClass().addAll(Styles.BUTTON_ICON, Styles.FLAT, Styles.DANGER);
+        update(UserControl.getInstance().hasLogged());
+       
 
         HBox actionContainer = new HBox(favoriteButton);
         actionContainer.setAlignment(Pos.CENTER_RIGHT);
@@ -189,5 +187,45 @@ public class HouseView extends ScrollPane{
             MultiThread.execute(task);
         }
     }
-    
+
+
+
+
+    @Override
+     public void update(boolean isLogged) {
+        //todo
+        if (isLogged) {
+            if (FavoriteControl.getInstance().check(curHouse.getId())) {
+                changeToFavorite();
+            } else {
+                changeToNonFavorite();
+            }
+        } else {
+            var favoriteIcon = new FontIcon(Material2AL.FAVORITE_BORDER);
+            favoriteIcon.setIconSize(30);
+            favoriteButton.setGraphic(favoriteIcon);
+            favoriteButton.setTooltip(new Tooltip("Đăng nhập để sử dụng chức năng này."));
+        }
+    }
+    private void changeToFavorite() {
+        var favoriteIcon = new FontIcon(Material2AL.FAVORITE);
+        favoriteIcon.setIconSize(40);
+        favoriteButton.setGraphic(favoriteIcon);
+        favoriteButton.setTooltip(new Tooltip("Bỏ yêu thích"));
+        favoriteButton.setOnAction(e -> {
+            FavoriteControl.getInstance().remove(curHouse.getId());
+            changeToNonFavorite();
+        });
+
+    }
+    private void changeToNonFavorite() {
+        var favoriteIcon = new FontIcon(Material2AL.FAVORITE_BORDER);
+        favoriteIcon.setIconSize(40);
+        favoriteButton.setGraphic(favoriteIcon);
+        favoriteButton.setTooltip(new Tooltip("Thêm yêu thích"));
+        favoriteButton.setOnAction(e -> {
+            FavoriteControl.getInstance().add(curHouse.getId());
+            changeToFavorite();
+        });
+    }
 }
