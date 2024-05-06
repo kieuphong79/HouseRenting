@@ -9,6 +9,8 @@ import org.kordamp.ikonli.material2.Material2OutlinedAL;
 import org.kordamp.ikonli.material2.Material2OutlinedMZ;
 
 import com.uet.App;
+import com.uet.exception.LogouErrorException;
+import com.uet.model.GoogleOauthLogin;
 import com.uet.model.UserControl;
 
 import atlantafx.base.controls.Message;
@@ -19,9 +21,13 @@ import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
@@ -166,8 +172,45 @@ public class BaseView extends StackPane implements UserUpdate{
         return temp;
     }
     private HBox getLoggedRightHeader() {
-        //todo
-        return new HBox(new Text("Logged"));
+        var res = new HBox();
+        HBox.setHgrow(res, Priority.ALWAYS);
+        res.setAlignment(Pos.CENTER_RIGHT);
+        res.setSpacing(20);
+        res.setPadding(new Insets(0, 10, 0, 0));
+
+        var avatar = new Button();
+        avatar.getStyleClass().addAll(Styles.BUTTON_ICON);
+        var icon = new ImageView(UserControl.getInstance().getCurrentUser().getPictureURL());
+        icon.setPreserveRatio(true);
+        icon.setFitWidth(30);
+        avatar.setGraphic(icon);
+
+        ContextMenu cm = new ContextMenu();
+        
+        MenuItem modifyButton = new MenuItem("Cá nhân", new FontIcon(Material2AL.ACCOUNT_CIRCLE));
+        modifyButton.setOnAction(e -> {
+            ContentManagement.getInstance().addUserView(new UserView());;
+        });
+        
+        MenuItem favoriteButton = new MenuItem("Danh sách yêu thích", new FontIcon(Material2AL.FAVORITE_BORDER));
+
+        MenuItem listHouseRequest = new MenuItem("Danh sách yêu cầu", new FontIcon(Material2AL.	
+LIST_ALT));
+
+        cm.getItems().addAll(modifyButton, favoriteButton, listHouseRequest);
+        
+        Button uploadButton = new Button("Đăng tin");
+        uploadButton.setTooltip(new Tooltip("Đăng nhập đế sử dụng chức năng này"));
+        uploadButton.setFont(Font.font("Times", FontWeight.SEMI_BOLD, 15));
+        uploadButton.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.LARGE, Styles.DANGER );
+
+        avatar.setOnAction(e -> {
+            System.out.println("clicked");
+            cm.show(uploadButton, Side.BOTTOM, 0, 0);
+        });
+
+        res.getChildren().addAll(uploadButton, avatar);
+        return res;
     }
     private ImageView getLogoImage() {
         ImageView imageView = new ImageView(App.class.getResource("logo.png").toString());
@@ -242,6 +285,6 @@ public class BaseView extends StackPane implements UserUpdate{
             rightHeader.getChildren().add(getLogoutRightHeader());
         }
     }
-    
+   
 }
 

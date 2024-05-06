@@ -5,6 +5,7 @@ package com.uet.view;
 import java.util.Hashtable;
 
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
 
@@ -60,4 +61,13 @@ public class ContentManagement extends TabPane {
         this.getTabs().add(res);
         this.getSelectionModel().select(res);
     } 
+    public void addUserView(UserView userview) {
+        Tab res = new Tab("Cá nhân");
+        res.setContent(userview);
+        var icon = new FontIcon(Material2AL.ACCOUNT_CIRCLE);
+        res.setGraphic(icon);
+        this.getTabs().add(res);
+        this.getSelectionModel().select(res);
+        
+    }
 }
