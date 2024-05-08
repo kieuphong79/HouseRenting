@@ -116,7 +116,7 @@ public class HouseOverview extends VBox implements UserUpdate {
             this.getScene().setCursor(Cursor.DEFAULT);
         });
         this.setOnMouseClicked(e -> {
-            ContentManagement.getInstance().addHouseView(this.house);
+            ContentManagement.getInstance().addContent(new HouseView(house), house.getTitle(), new FontIcon(Material2AL.HOUSE));
         });
         
     }

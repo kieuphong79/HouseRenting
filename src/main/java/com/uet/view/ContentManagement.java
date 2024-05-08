@@ -12,6 +12,7 @@ import org.kordamp.ikonli.material2.Material2OutlinedAL;
 import com.uet.model.House;
 import com.uet.model.SearchParameter;
 
+import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
@@ -52,21 +53,31 @@ public class ContentManagement extends TabPane {
         }
         this.getSelectionModel().select(funtionTabCache.get(id));
     }
-    public void addHouseView(House house) {
-        Tab res = new Tab(house.getTitle());
-        res.setContent(new HouseView(house));
-        FontIcon houseIcon = new FontIcon(Material2OutlinedAL.HOUSE);
-        houseIcon.setIconSize(20);
-        res.setGraphic(houseIcon);
-        this.getTabs().add(res);
-        this.getSelectionModel().select(res);
-    } 
-    public void addUserView(UserView userview) {
-        Tab res = new Tab("Cá nhân");
-        res.setContent(userview);
-        var icon = new FontIcon(Material2AL.ACCOUNT_CIRCLE);
+    // public void addHouseView(House house) {
+    //     Tab res = new Tab(house.getTitle());
+    //     res.setContent(new HouseView(house));
+    //     FontIcon houseIcon = new FontIcon(Material2OutlinedAL.HOUSE);
+    //     houseIcon.setIconSize(20);
+    //     res.setGraphic(houseIcon);
+    //     this.getTabs().add(res);
+    //     this.getSelectionModel().select(res);
+    // } 
+    // public void addUserView(UserView userview) {
+    //     Tab res = new Tab("Cá nhân");
+    //     res.setContent(userview);
+    //     var icon = new FontIcon(Material2AL.ACCOUNT_CIRCLE);
+    //     icon.setIconSize(20);
+    //     res.setGraphic(icon);
+    //     this.getTabs().add(res);
+    //     this.getSelectionModel().select(res);
+    // }
+    public void addContent(Node node, String title, FontIcon icon) {
+        var res = new Tab(title);
+        res.setContent(node);
+        icon.setIconSize(20);
         res.setGraphic(icon);
         this.getTabs().add(res);
         this.getSelectionModel().select(res);
+
     }
 }

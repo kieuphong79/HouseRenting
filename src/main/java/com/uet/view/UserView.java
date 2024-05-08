@@ -115,7 +115,6 @@ public class UserView extends HBox {
         
         container.getChildren().addAll(label1, label2, image, nameSdt, emailContainer, changeContainer);
         this.getChildren().addAll(scroll);
-        // this.setStyle("-fx-background-color:red;");
     }
     
 }
