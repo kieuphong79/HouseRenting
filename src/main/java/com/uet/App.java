@@ -3,9 +3,7 @@ package com.uet;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import com.uet.exception.LoginErrorException;
 import com.uet.model.FavoriteControl;
-import com.uet.model.GoogleOauthLogin;
 import com.uet.model.MysqlConnector;
 import com.uet.model.UserControl;
 import com.uet.view.BaseView;

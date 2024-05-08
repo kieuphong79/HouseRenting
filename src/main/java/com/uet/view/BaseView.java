@@ -194,10 +194,10 @@ public class BaseView extends StackPane implements UserUpdate{
         
         MenuItem favoriteButton = new MenuItem("Danh sách yêu thích", new FontIcon(Material2AL.FAVORITE_BORDER));
 
-        MenuItem listHouseRequest = new MenuItem("Danh sách yêu cầu", new FontIcon(Material2AL.	
+        MenuItem listHouseManagement = new MenuItem("Quản lý nhà cho thuê", new FontIcon(Material2AL.	
 LIST_ALT));
 
-        cm.getItems().addAll(modifyButton, favoriteButton, listHouseRequest);
+        cm.getItems().addAll(modifyButton, favoriteButton, listHouseManagement);
         
         Button uploadButton = new Button("Đăng tin");
         uploadButton.setTooltip(new Tooltip("Đăng nhập đế sử dụng chức năng này"));

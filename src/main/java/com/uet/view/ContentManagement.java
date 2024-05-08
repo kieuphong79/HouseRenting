@@ -68,6 +68,5 @@ public class ContentManagement extends TabPane {
         res.setGraphic(icon);
         this.getTabs().add(res);
         this.getSelectionModel().select(res);
-        
     }
 }
