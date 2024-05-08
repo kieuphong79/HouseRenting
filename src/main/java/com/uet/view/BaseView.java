@@ -193,7 +193,9 @@ public class BaseView extends StackPane implements UserUpdate{
         });
         
         MenuItem favoriteButton = new MenuItem("Danh sách yêu thích", new FontIcon(Material2AL.FAVORITE_BORDER));
-        // favoriteButton.setOnAction();
+        favoriteButton.setOnAction(e -> {
+            ContentManagement.getInstance().addContent(new FavoriteView(), "Danh sách yêu thích", new FontIcon(Material2AL.FAVORITE_BORDER));
+        });
 
         MenuItem listHouseManagement = new MenuItem("Quản lý nhà cho thuê", new FontIcon(Material2AL.	
 LIST_ALT));
@@ -206,7 +208,6 @@ LIST_ALT));
         uploadButton.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.LARGE, Styles.DANGER );
 
         avatar.setOnAction(e -> {
-            System.out.println("clicked");
             cm.show(uploadButton, Side.BOTTOM, 0, 0);
         });
 
