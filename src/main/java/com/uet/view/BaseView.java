@@ -9,7 +9,7 @@ import org.kordamp.ikonli.material2.Material2OutlinedAL;
 import org.kordamp.ikonli.material2.Material2OutlinedMZ;
 
 import com.uet.App;
-import com.uet.exception.LogouErrorException;
+import com.uet.exception.LogoutErrorException;
 import com.uet.model.GoogleOauthLogin;
 import com.uet.model.UserControl;
 
@@ -200,8 +200,18 @@ public class BaseView extends StackPane implements UserUpdate{
         MenuItem listHouseManagement = new MenuItem("Quản lý nhà cho thuê", new FontIcon(Material2AL.	
 LIST_ALT));
 
-        cm.getItems().addAll(modifyButton, favoriteButton, listHouseManagement);
+        MenuItem logoutButton = new MenuItem("Đăng xuất", new FontIcon(Material2AL.LOG_OUT));
+        logoutButton.setOnAction(e -> {
+            try {
+                UserControl.getInstance().logout();
+            } catch (LogoutErrorException e1) {
+                createMessage("Danger", "Đăng xuất thất bại");
+            }
+        });
+
+        cm.getItems().addAll(modifyButton, favoriteButton, listHouseManagement, logoutButton);
         
+        //todo 
         Button uploadButton = new Button("Đăng tin");
         uploadButton.setTooltip(new Tooltip("Đăng nhập đế sử dụng chức năng này"));
         uploadButton.setFont(Font.font("Times", FontWeight.SEMI_BOLD, 15));
@@ -210,6 +220,7 @@ LIST_ALT));
         avatar.setOnAction(e -> {
             cm.show(uploadButton, Side.BOTTOM, 0, 0);
         });
+
 
         res.getChildren().addAll(uploadButton, avatar);
         return res;

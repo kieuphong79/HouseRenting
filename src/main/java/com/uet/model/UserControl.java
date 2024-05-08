@@ -14,7 +14,7 @@ import com.google.api.client.util.store.DataStore;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.uet.exception.CookiesErrorException;
 import com.uet.exception.LoginErrorException;
-import com.uet.exception.LogouErrorException;
+import com.uet.exception.LogoutErrorException;
 import com.uet.threads.MultiThread;
 import com.uet.view.BaseView;
 import com.uet.view.ContentManagement;
@@ -228,11 +228,11 @@ public class UserControl implements UserUpdate {
         System.out.println("debu start thread");
         MultiThread.execute(task);
     }
-    public void logout() throws LogouErrorException {
+    public void logout() throws LogoutErrorException {
         try {
             dataStore.delete(DATA_STORE_USER);
         } catch (IOException e) {
-            throw new LogouErrorException("Lỗi xóa cookies");
+            throw new LogoutErrorException("Lỗi xóa cookies");
         }
         currentUser = null;
         hasLogged = false;

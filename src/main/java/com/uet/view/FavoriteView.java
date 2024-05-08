@@ -1,14 +1,13 @@
 package com.uet.view;
 
+import java.beans.EventHandler;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2AL;
-import org.kordamp.ikonli.material2.Material2MZ;
 
 import com.uet.model.DataStatement;
 import com.uet.model.FavoriteControl;
@@ -16,11 +15,11 @@ import com.uet.model.House;
 import com.uet.model.UserControl;
 
 import atlantafx.base.theme.Styles;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
@@ -32,7 +31,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
-public class FavoriteView extends HBox {
+public class FavoriteView extends HBox implements UserUpdate{
     private VBox container;
     private ListView<House> list;
     private List<House> listHouse;
@@ -61,7 +60,7 @@ public class FavoriteView extends HBox {
             DataStatement<Void> st = new DataStatement<Void>() {
                 @Override
                 protected Void call() throws SQLException {
-                    String sql = "SELECT * FROM houses where userID = \'" + UserControl.getInstance().getCurrentUser().getUserID() + "\' and id in (";
+                    String sql = "SELECT * FROM houses where isPublic = 1 and userID = \'" + UserControl.getInstance().getCurrentUser().getUserID() + "\' and id in (";
                     var t = FavoriteControl.getInstance().getIDs();
                     System.out.println(t.toString());
                     Iterator it = t.iterator();
@@ -136,6 +135,18 @@ public class FavoriteView extends HBox {
             
         });
         container.getChildren().addAll(list);
+    }
+
+    @Override
+    public void update(boolean isLogged) {
+        EventHandler consumer = e -> {
+        };
+        if (!isLogged) {
+            this.addEventFilter(EventType.ROOT, e -> {
+            });
+        } else {
+            this.removeEventFilter(null, null);
+        }
     }
     
 }

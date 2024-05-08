@@ -96,7 +96,7 @@ public class SearchBarViewModel {
                 List<String> res = new LinkedList<>();
                 try {
                     Statement statement = this.createStatement();
-                    ResultSet resultSet = statement.executeQuery("SELECT DISTINCT city FROM houses;");
+                    ResultSet resultSet = statement.executeQuery("SELECT DISTINCT city FROM houses where isPublic = 1;");
                     while (resultSet.next()) {
                         res.add(resultSet.getString(1));
                     }
@@ -129,7 +129,7 @@ public class SearchBarViewModel {
                 List<String> res = new LinkedList<>();
                 try {
                     Statement statement = this.createStatement(); 
-                    String temp = "SELECT DISTINCT district FROM houses WHERE city = '" + curCity + "';";
+                    String temp = "SELECT DISTINCT district FROM houses WHERE isPublic = 1 and city = '" + curCity + "';";
                     ResultSet resultSet = statement.executeQuery(temp);
                     while (resultSet.next()) {
                         res.add(resultSet.getString(1));
@@ -164,7 +164,7 @@ public class SearchBarViewModel {
                 List<String> res = new LinkedList<>();
                 try {
                     Statement statement = this.createStatement();
-                    String temp = "SELECT DISTINCT street FROM houses WHERE city = '" + curCity + "' AND district = '" + curDistrict + "';";
+                    String temp = "SELECT DISTINCT street FROM houses WHERE isPublic = 1 and city = '" + curCity + "' AND district = '" + curDistrict + "';";
                     ResultSet resultSet = statement.executeQuery(temp);
                     while (resultSet.next()) {
                         res.add(resultSet.getString(1));

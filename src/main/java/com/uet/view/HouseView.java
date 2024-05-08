@@ -1,23 +1,30 @@
 package com.uet.view;
 
 
+import java.sql.SQLException;
+
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
 
 import com.uet.App;
+import com.uet.model.DataStatement;
 import com.uet.model.FavoriteControl;
 import com.uet.model.House;
+import com.uet.model.User;
 import com.uet.model.UserControl;
 import com.uet.threads.MultiThread;
 import com.uet.viewmodel.HouseViewModel;
 
+import atlantafx.base.controls.Card;
+import atlantafx.base.controls.Tile;
 import atlantafx.base.theme.Styles;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.ProgressIndicator;
@@ -30,7 +37,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 public class HouseView extends ScrollPane implements UserUpdate{
     private House curHouse;
@@ -97,7 +103,7 @@ public class HouseView extends ScrollPane implements UserUpdate{
         VBox imagePlusInformation = new VBox(imageShower, titleOfHouse, addressOfHouse, new Separator(), overallInformation, new Separator(), detailContainer, featureContainer);
         
         imagePlusInformation.setSpacing(10);
-        firstHBox.getChildren().addAll(imagePlusInformation);
+        firstHBox.getChildren().addAll(imagePlusInformation, getUserDisplay());
         // imageShower.setStyle("-fx-background-color:red;");
 // lam tiep detail
         VBox container = new VBox();
@@ -132,6 +138,35 @@ public class HouseView extends ScrollPane implements UserUpdate{
         HBox.setMargin(dataText, new Insets(0, 0, 0, 30));
         res.setAlignment(Pos.CENTER_LEFT);
         return res;
+    }
+    private Card getUserDisplay() {
+        Card card = new Card();
+        card.setMinHeight(300);
+        card.setMaxHeight(300);
+        DataStatement<User> ds = new DataStatement<User>() {
+
+            @Override
+            protected User call() throws Exception {
+                String sql = "Select * from users where userID = ?;";
+                var pst = this.createPreparedStatement(sql);
+                pst.setString(1, curHouse.getUserID());
+                var rs = pst.executeQuery();
+                while (rs.next()) {
+                    var user = User.getUserFromResultSet(rs);
+                    return user;
+                }
+                throw new SQLException();
+            }
+        };
+        User user = null;
+        try {
+            user = ds.startInMainThread();
+        } catch (Exception e) {
+            BaseView.getInstance().createMessage("Danger", "Không thể kết nối tới database");
+        }
+        card.setHeader(new Tile(user.getName(), user.getEmail(), new ImageView(user.getPictureURL())));
+        card.setSubHeader(new Text(user.getSDT()));
+        return card;
     }
 
 
