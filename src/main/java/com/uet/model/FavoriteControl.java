@@ -128,5 +128,7 @@ public class FavoriteControl {
 
         }
     }
-    
+    public HashSet<Integer> getIDs() {
+        return favoriteList;
+    }
 }

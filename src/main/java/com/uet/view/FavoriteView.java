@@ -2,10 +2,12 @@ package com.uet.view;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
 
 import com.uet.model.DataStatement;
@@ -54,24 +56,37 @@ public class FavoriteView extends HBox {
 
         listHouse = new ArrayList<>();
         //continue
-        DataStatement<Void> st = new DataStatement<Void>() {
-            @Override
-            protected Void call() throws SQLException {
-                String sql = "SELECT * FROM houses_favorite_view where userID = ?;";
-                var pst = this.createPreparedStatement(sql);
-                pst.setString(1, UserControl.getInstance().getCurrentUser().getUserID());
-                var rs = pst.executeQuery();
-                while (rs.next()) {
-                    House t = House.getHouseFromResultSet(rs);
-                    listHouse.add(t);
+        if (!FavoriteControl.getInstance().getIDs().isEmpty()) {
+
+            DataStatement<Void> st = new DataStatement<Void>() {
+                @Override
+                protected Void call() throws SQLException {
+                    String sql = "SELECT * FROM houses where userID = \'" + UserControl.getInstance().getCurrentUser().getUserID() + "\' and id in (";
+                    var t = FavoriteControl.getInstance().getIDs();
+                    System.out.println(t.toString());
+                    Iterator it = t.iterator();
+                    for (int i = 0; i < t.size(); i++) {
+                        if (i != t.size() - 1) {
+                            sql += (int) it.next() + ", ";
+                        } else {
+                            sql += (int) it.next() + ");";
+                        }
+                    }
+                    System.out.println(sql);
+                    var st = this.createStatement();
+                    var rs = st.executeQuery(sql);
+                    while (rs.next()) {
+                        House house = House.getHouseFromResultSet(rs);
+                        listHouse.add(house);
+                    }
+                    return null;
                 }
-                return null;
+            };
+            try {
+                st.startInMainThread();
+            } catch (Exception e) {
+                throw new RuntimeException("Lỗi truy vấn favoriteview");
             }
-        };
-        try {
-            st.startInMainThread();
-        } catch (Exception e) {
-            throw new RuntimeException("Lỗi truy vấn favoriteview");
         }
 
         list = new ListView<>();
@@ -96,7 +111,11 @@ public class FavoriteView extends HBox {
                             setGraphic(null);
                         } else {
                             var button = new Button("Loại bỏ");
-                            button.setOnAction(e -> FavoriteControl.getInstance().remove(house.getId()));
+                            button.setOnAction(e -> {
+                                FavoriteControl.getInstance().remove(house.getId());
+                                list.getItems().remove(house);
+                            });
+
                             button.getStyleClass().addAll(Styles.FLAT);
                             HBox right = new HBox(button);
                             right.setAlignment(Pos.CENTER_RIGHT);
@@ -106,6 +125,9 @@ public class FavoriteView extends HBox {
                             container.setAlignment(Pos.CENTER_LEFT);
                             container.getChildren().addAll();
                             setGraphic(container);
+                            this.setOnMouseClicked(e -> {
+                                ContentManagement.getInstance().addContent(new HouseView(house), house.getTitle(), new FontIcon(Material2AL.HOUSE));
+                            });
                         }
                     }
                 };
