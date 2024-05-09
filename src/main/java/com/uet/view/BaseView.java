@@ -189,7 +189,7 @@ public class BaseView extends StackPane implements UserUpdate{
         
         MenuItem modifyButton = new MenuItem("Cá nhân", new FontIcon(Material2AL.ACCOUNT_CIRCLE));
         modifyButton.setOnAction(e -> {
-            ContentManagement.getInstance().addContent(new UserView(), "Cá nhân", new FontIcon(Material2AL.ACCOUNT_CIRCLE));
+            ContentManagement.getInstance().addContent(new UserView(UserControl.getInstance().getCurrentUser(), true), "Cá nhân", new FontIcon(Material2AL.ACCOUNT_CIRCLE));
         });
         
         MenuItem favoriteButton = new MenuItem("Danh sách yêu thích", new FontIcon(Material2AL.FAVORITE_BORDER));

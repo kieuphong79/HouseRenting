@@ -15,7 +15,6 @@ import com.uet.model.House;
 import com.uet.model.User;
 import com.uet.model.UserControl;
 import com.uet.threads.MultiThread;
-import com.uet.viewmodel.HouseViewModel;
 
 import atlantafx.base.controls.Card;
 import atlantafx.base.controls.Tile;
@@ -40,16 +39,14 @@ import javafx.scene.text.Text;
 
 public class HouseView extends ScrollPane implements UserUpdate{
     private House curHouse;
-    private HouseViewModel houseViewModel;
     
     //user independent
     private Button favoriteButton;
 
     public HouseView(House house) {
         super();
-        curHouse = house;
+        curHouse = house; 
         //initialize 
-        houseViewModel = new HouseViewModel();
         ImageShower imageShower = new ImageShower(curHouse.getImagesUrl());
         //component
         HBox firstHBox = new HBox();
@@ -158,14 +155,21 @@ public class HouseView extends ScrollPane implements UserUpdate{
                 throw new SQLException();
             }
         };
+        
         User user = null;
-        try {
-            user = ds.startInMainThread();
+        try { 
+           user = ds.startInMainThread();
         } catch (Exception e) {
             BaseView.getInstance().createMessage("Danger", "Không thể kết nối tới database");
+            return new Card();
         }
+        final User user2 = user;
         card.setHeader(new Tile(user.getName(), user.getEmail(), new ImageView(user.getPictureURL())));
         card.setSubHeader(new Text(user.getSDT()));
+        card.setOnMouseClicked(e -> {
+            ContentManagement.getInstance().addContent(new UserView(user2, false), "Người dùng: " + user2.getName(), new FontIcon(Material2AL.ACCOUNT_CIRCLE));
+            e.consume();
+        });
         return card;
     }
 

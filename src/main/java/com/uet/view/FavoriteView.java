@@ -13,6 +13,7 @@ import com.uet.model.DataStatement;
 import com.uet.model.FavoriteControl;
 import com.uet.model.House;
 import com.uet.model.UserControl;
+import com.uet.viewmodel.FavoriteViewModel;
 
 import atlantafx.base.theme.Styles;
 import javafx.event.EventType;
@@ -31,10 +32,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
-public class FavoriteView extends HBox implements UserUpdate{
+public class FavoriteView extends HBox {
     private VBox container;
     private ListView<House> list;
-    private List<House> listHouse;
+    private FavoriteViewModel favoriteViewModel;
 
     public FavoriteView() {
         super();
@@ -53,46 +54,12 @@ public class FavoriteView extends HBox implements UserUpdate{
         container.setPadding(new Insets(10, 10, 10, 10));
         scroll.setContent(container);
 
-        listHouse = new ArrayList<>();
-        //continue
-        if (!FavoriteControl.getInstance().getIDs().isEmpty()) {
-
-            DataStatement<Void> st = new DataStatement<Void>() {
-                @Override
-                protected Void call() throws SQLException {
-                    String sql = "SELECT * FROM houses where isPublic = 1 and userID = \'" + UserControl.getInstance().getCurrentUser().getUserID() + "\' and id in (";
-                    var t = FavoriteControl.getInstance().getIDs();
-                    System.out.println(t.toString());
-                    Iterator it = t.iterator();
-                    for (int i = 0; i < t.size(); i++) {
-                        if (i != t.size() - 1) {
-                            sql += (int) it.next() + ", ";
-                        } else {
-                            sql += (int) it.next() + ");";
-                        }
-                    }
-                    System.out.println(sql);
-                    var st = this.createStatement();
-                    var rs = st.executeQuery(sql);
-                    while (rs.next()) {
-                        House house = House.getHouseFromResultSet(rs);
-                        listHouse.add(house);
-                    }
-                    return null;
-                }
-            };
-            try {
-                st.startInMainThread();
-            } catch (Exception e) {
-                throw new RuntimeException("Lỗi truy vấn favoriteview");
-            }
-        }
-
+        favoriteViewModel = new FavoriteViewModel();
         list = new ListView<>();
         list.getStyleClass().addAll(Styles.BORDERED, Styles.STRIPED);
         list.setMinWidth(1000);
         VBox.setVgrow(list, Priority.ALWAYS);
-        list.getItems().addAll(listHouse);
+        list.getItems().addAll(favoriteViewModel.getList());
 
         
         list.setCellFactory(new Callback<ListView<House>,ListCell<House>>() {
@@ -137,16 +104,5 @@ public class FavoriteView extends HBox implements UserUpdate{
         container.getChildren().addAll(list);
     }
 
-    @Override
-    public void update(boolean isLogged) {
-        EventHandler consumer = e -> {
-        };
-        if (!isLogged) {
-            this.addEventFilter(EventType.ROOT, e -> {
-            });
-        } else {
-            this.removeEventFilter(null, null);
-        }
-    }
-    
+   
 }

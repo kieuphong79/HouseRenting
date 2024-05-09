@@ -10,16 +10,15 @@ import com.uet.model.DataStatement;
 import com.uet.model.User;
 import com.uet.model.UserControl;
 import com.uet.threads.MultiThread;
+import com.uet.viewmodel.UserViewModel;
 
 import atlantafx.base.controls.CustomTextField;
 import atlantafx.base.theme.Styles;
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollToEvent;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -28,9 +27,10 @@ import javafx.scene.paint.Color;
 
 public class UserView extends HBox {
     private VBox container;
-    public UserView() {
+    private UserViewModel userViewModel;
+    public UserView(User user, boolean b) {
         super();
-        User user = UserControl.getInstance().getCurrentUser();
+        userViewModel = new UserViewModel(user, b);
 
         this.setAlignment(Pos.CENTER);
         // this.setStyle("-fx-background-color:black;");
@@ -68,9 +68,13 @@ public class UserView extends HBox {
         nameContainer.setSpacing(5);
 
         CustomTextField sdt = new CustomTextField(UserControl.getInstance().getCurrentUser().getSDT());
+        sdt.setEditable(userViewModel.isChangeable());
         sdt.setLeft(new FontIcon(Material2MZ.PHONE));
         var sdtContainer = new VBox(new Label("SĐT"), sdt);
         sdtContainer.setSpacing(5);
+
+        HBox nameSdt = new HBox(nameContainer, sdtContainer);
+        nameSdt.setSpacing(10);
 
         CustomTextField email = new CustomTextField(user.getEmail());
         email.setMaxWidth(200);
@@ -79,41 +83,21 @@ public class UserView extends HBox {
         var emailContainer = new VBox(new Label("Email"), email);
         // emailContainer.setStyle("-fx-background-color: green;");
         emailContainer.setSpacing(5);
-        
-        Button changeButton = new Button("Chỉnh sửa");
-        changeButton.getStyleClass().addAll(Styles.ACCENT);
-        HBox changeContainer = new HBox(changeButton);
-        changeContainer.setAlignment(Pos.CENTER_RIGHT);
-        changeButton.setOnAction(e -> {
-            if (!sdt.getText().equals(user.getSDT())) {
-                user.setSDT(sdt.getText());
-                DataStatement<Void> st = new DataStatement<Void>() {
-
-                    @Override
-                    protected Void call() throws SQLException {
-                        var sql = "update users set sdt = ? where userID = ?";
-                        var pst = this.createPreparedStatement(sql);
-                        pst.setString(1, user.getSDT());
-                        pst.setString(2, user.getUserID());
-                        int rowsAffected = pst.executeUpdate();
-                        return null;
-                    }
-                    
-                };
-                st.setOnSucceeded(event -> {
-                    BaseView.getInstance().createMessage("Success", "Cập nhật thông tin thành công!");
-                });
-                st.setOnFailed(event -> {
-                    BaseView.getInstance().createMessage("Danger", "Cập nhật thông tin thất bại!");
-                });
-                MultiThread.execute(st);
-            }
-        });
-        
-        HBox nameSdt = new HBox(nameContainer, sdtContainer);
-        nameSdt.setSpacing(10);
-        
-        container.getChildren().addAll(label1, label2, image, nameSdt, emailContainer, changeContainer);
+        if (userViewModel.isChangeable()) {
+            Button changeButton = new Button("Chỉnh sửa");
+            changeButton.getStyleClass().addAll(Styles.ACCENT);
+            HBox changeContainer = new HBox(changeButton);
+            changeContainer.setAlignment(Pos.CENTER_RIGHT);
+            changeButton.setOnAction(e -> {
+                if (!sdt.getText().equals(user.getSDT())) {
+                    user.setSDT(sdt.getText());
+                    userViewModel.updateUserInformation();
+                }
+            });
+            container.getChildren().addAll(label1, label2, image, nameSdt, emailContainer, changeContainer);
+        } else {
+            container.getChildren().addAll(label1, label2, image, nameSdt, emailContainer);
+        }
         this.getChildren().addAll(scroll);
     }
     

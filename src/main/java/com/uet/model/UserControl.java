@@ -18,7 +18,9 @@ import com.uet.exception.LogoutErrorException;
 import com.uet.threads.MultiThread;
 import com.uet.view.BaseView;
 import com.uet.view.ContentManagement;
+import com.uet.view.FavoriteView;
 import com.uet.view.UserUpdate;
+import com.uet.view.UserView;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -222,6 +224,7 @@ public class UserControl implements UserUpdate {
         };
         task.setOnSucceeded(e -> {
             System.out.println("login successfully, update");
+            BaseView.getInstance().createMessage("Success", "Đăng nhập thành công");
             favoriteControl.addFavoriteList(fetchFavoriteList());
             update(hasLogged);
         });
@@ -323,6 +326,12 @@ public class UserControl implements UserUpdate {
                 System.out.println(3);
                 for (int i = 0; i < temp.size(); i++) {
                     var tab = temp.get(i);
+                    if (!hasLogged && (tab.getContent() instanceof FavoriteView || tab.getContent() instanceof UserView)) {
+                        Platform.runLater(() -> {
+                            temp.remove(tab);
+                        });
+                        continue;
+                    }
                     if (tab.getContent() instanceof UserUpdate) {
                         UserUpdate  t = (UserUpdate) tab.getContent();
                         Platform.runLater(() -> {

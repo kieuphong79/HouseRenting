@@ -13,6 +13,7 @@ module com.uet {
     
     requires java.desktop;
     requires com.google.gson;
+    requires plantuml.generator.util;
 
     opens com.uet to javafx.fxml, atlantafx.base, org.kordamp.ikonli.javafx, org.controlsfx.controls, mysql.connector.j, google.api.client;
     exports com.uet;
