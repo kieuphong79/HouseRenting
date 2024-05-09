@@ -14,7 +14,7 @@ public class User {
         return user;
     }
     public static User getUserObject(String userID) {
-        DataStatement<User> task = new DataStatement<>() {
+        DataRequest<User> task = new DataRequest<>() {
 
             @Override
             protected User call() throws SQLException {

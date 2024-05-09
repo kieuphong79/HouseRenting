@@ -5,11 +5,8 @@ package com.uet.view;
 import java.util.Hashtable;
 
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
-import org.kordamp.ikonli.material2.Material2OutlinedAL;
 
-import com.uet.model.House;
 import com.uet.model.SearchParameter;
 
 import javafx.scene.Node;
@@ -24,10 +21,10 @@ public class ContentManagement extends TabPane {
         if (singleton == null) singleton = new ContentManagement();
         return singleton;
     }
-    private Hashtable<Integer, Tab> funtionTabCache;
+    private Hashtable<Integer, Tab> tabCache;
     private ContentManagement() {
         super();
-        funtionTabCache = new Hashtable<>();
+        tabCache = new Hashtable<>();
         this.setTabMaxWidth(200);
         this.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
     }
@@ -44,14 +41,14 @@ public class ContentManagement extends TabPane {
         searchTab.setGraphic(si);
         searchTab.setClosable(false);
         this.getTabs().add(searchTab);
-        funtionTabCache.put(SEARCH_FUNCTION, searchTab);
+        tabCache.put(SEARCH_FUNCTION, searchTab);
     }
     public void showFunction(int id) {
         // functionTabCache chac chan co node day
-        if (!this.getTabs().contains(funtionTabCache.get(id))) {
-            this.getTabs().add(funtionTabCache.get(id));
+        if (!this.getTabs().contains(tabCache.get(id))) {
+            this.getTabs().add(tabCache.get(id));
         }
-        this.getSelectionModel().select(funtionTabCache.get(id));
+        this.getSelectionModel().select(tabCache.get(id));
     }
     // public void addHouseView(House house) {
     //     Tab res = new Tab(house.getTitle());

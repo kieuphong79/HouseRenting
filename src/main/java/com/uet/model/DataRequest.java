@@ -10,7 +10,7 @@ import com.uet.view.BaseView;
 import javafx.concurrent.Task;
 
 
-public abstract class DataStatement<T> extends Task<T> {
+public abstract class DataRequest<T> extends Task<T> {
     public Statement createStatement() throws SQLException {
         return MysqlConnector.getInstance().getConnection().createStatement();
     }

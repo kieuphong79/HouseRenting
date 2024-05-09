@@ -2,7 +2,7 @@ package com.uet.viewmodel;
 
 import java.sql.SQLException;
 
-import com.uet.model.DataStatement;
+import com.uet.model.DataRequest;
 import com.uet.model.User;
 import com.uet.threads.MultiThread;
 import com.uet.view.BaseView;
@@ -17,7 +17,7 @@ public class UserViewModel {
     public User getUser() {return user;}
     public boolean isChangeable() {return isChangable;}
     public void updateUserInformation() {
-        DataStatement<Void> st = new DataStatement<Void>() {
+        DataRequest<Void> st = new DataRequest<Void>() {
 
             @Override
             protected Void call() throws SQLException {

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.uet.model.DataStatement;
+import com.uet.model.DataRequest;
 import com.uet.model.FavoriteControl;
 import com.uet.model.House;
 import com.uet.model.UserControl;
@@ -23,7 +23,7 @@ public class FavoriteViewModel {
     private void fetchFavorite() {
         if (!FavoriteControl.getInstance().getIDs().isEmpty()) {
 
-            DataStatement<Void> st = new DataStatement<Void>() {
+            DataRequest<Void> st = new DataRequest<Void>() {
                 @Override
                 protected Void call() throws SQLException {
                     String sql = "SELECT * FROM houses where isPublic = 1 and userID = \'" + UserControl.getInstance().getCurrentUser().getUserID() + "\' and id in (";

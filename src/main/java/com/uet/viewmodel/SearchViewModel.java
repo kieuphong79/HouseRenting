@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.uet.model.DataStatement;
+import com.uet.model.DataRequest;
 import com.uet.model.House;
 import com.uet.model.HouseType;
 import com.uet.model.SearchParameter;
@@ -39,7 +39,7 @@ public class SearchViewModel {
     public void search() {
         houses.clear();
         housesChanged.set(false);
-        DataStatement<Void> st = new DataStatement<Void>() {
+        DataRequest<Void> st = new DataRequest<Void>() {
             @Override
             protected Void call() {
                 // //debug

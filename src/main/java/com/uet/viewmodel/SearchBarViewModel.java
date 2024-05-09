@@ -9,7 +9,7 @@ import java.util.List;
 
 import com.mysql.cj.conf.BooleanProperty;
 import com.uet.model.AddressProperty;
-import com.uet.model.DataStatement;
+import com.uet.model.DataRequest;
 import com.uet.model.House;
 import com.uet.model.HouseType;
 import com.uet.view.BaseView;
@@ -90,7 +90,7 @@ public class SearchBarViewModel {
     }
 
     public List<String> getPossibleCity() {
-       DataStatement<List<String>> st = new DataStatement<>() {
+       DataRequest<List<String>> st = new DataRequest<>() {
             @Override
             protected List<String> call() {
                 List<String> res = new LinkedList<>();
@@ -123,7 +123,7 @@ public class SearchBarViewModel {
         String curCity = address.getCity().get();
         // loi lap trinh ko can bat
         if (curCity.equals("Tất cả")) throw new RuntimeException("Chưa chọn thành phố");
-       DataStatement<List<String>> st = new DataStatement<List<String>>() {
+       DataRequest<List<String>> st = new DataRequest<List<String>>() {
             @Override
             protected List<String> call() {
                 List<String> res = new LinkedList<>();
@@ -158,7 +158,7 @@ public class SearchBarViewModel {
         if (curCity.equals("Tất cả")) throw new RuntimeException("Chưa chọn thành phố");
         String curDistrict = address.getDistrict().get();
         if (curDistrict.equals("Tất cả")) throw new RuntimeException("Chưa chọn quận");
-       DataStatement<List<String>> st = new DataStatement<List<String>>() {
+       DataRequest<List<String>> st = new DataRequest<List<String>>() {
             @Override
             protected List<String> call() {
                 List<String> res = new LinkedList<>();

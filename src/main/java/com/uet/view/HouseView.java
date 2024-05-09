@@ -9,7 +9,7 @@ import org.kordamp.ikonli.material2.Material2MZ;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
 
 import com.uet.App;
-import com.uet.model.DataStatement;
+import com.uet.model.DataRequest;
 import com.uet.model.FavoriteControl;
 import com.uet.model.House;
 import com.uet.model.User;
@@ -23,7 +23,6 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.ProgressIndicator;
@@ -37,7 +36,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class HouseView extends ScrollPane implements UserUpdate{
+public class HouseView extends ScrollPane implements LoginUpdate{
     private House curHouse;
     
     //user independent
@@ -140,7 +139,7 @@ public class HouseView extends ScrollPane implements UserUpdate{
         Card card = new Card();
         card.setMinHeight(300);
         card.setMaxHeight(300);
-        DataStatement<User> ds = new DataStatement<User>() {
+        DataRequest<User> ds = new DataRequest<User>() {
 
             @Override
             protected User call() throws Exception {

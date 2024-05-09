@@ -1,22 +1,13 @@
 package com.uet.view;
 
-import java.beans.EventHandler;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2AL;
 
-import com.uet.model.DataStatement;
 import com.uet.model.FavoriteControl;
 import com.uet.model.House;
-import com.uet.model.UserControl;
 import com.uet.viewmodel.FavoriteViewModel;
 
 import atlantafx.base.theme.Styles;
-import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;

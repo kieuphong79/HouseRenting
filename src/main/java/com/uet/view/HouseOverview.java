@@ -9,7 +9,6 @@ import org.kordamp.ikonli.material2.Material2OutlinedAL;
 import com.uet.App;
 import com.uet.model.FavoriteControl;
 import com.uet.model.House;
-import com.uet.model.User;
 import com.uet.model.UserControl;
 import com.uet.threads.MultiThread;
 
@@ -38,7 +37,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-public class HouseOverview extends VBox implements UserUpdate {
+public class HouseOverview extends VBox implements LoginUpdate {
     private ImageContainer imagesContainer;
     private Label title;
     private Text priceText;
@@ -120,7 +119,7 @@ public class HouseOverview extends VBox implements UserUpdate {
         });
         
     }
-    public void update(House n) {
+    public void updateNewHouse(House n) {
         house = n;
         imagesContainer.update(house.getImagesUrl());
         title.setText(house.getTitle());

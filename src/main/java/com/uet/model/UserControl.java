@@ -19,13 +19,13 @@ import com.uet.threads.MultiThread;
 import com.uet.view.BaseView;
 import com.uet.view.ContentManagement;
 import com.uet.view.FavoriteView;
-import com.uet.view.UserUpdate;
+import com.uet.view.LoginUpdate;
 import com.uet.view.UserView;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class UserControl implements UserUpdate {
+public class UserControl implements LoginUpdate {
     private static final String DATA_STORE_DIR = System.getProperty("user.home") + File.separator + ".houserenting";
     private static final String DATA_STORE_USER = "userCookies";
     private static String CHAR_PATTERN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -75,7 +75,7 @@ public class UserControl implements UserUpdate {
         if (storedCookies == null) {
             throw new CookiesErrorException();
         }
-        DataStatement<Void> st = new DataStatement<>() {
+        DataRequest<Void> st = new DataRequest<>() {
             @Override
             protected Void call() throws SQLException, CookiesErrorException {
                 String sql = "SELECT * FROM users where cookies = ?;";
@@ -103,7 +103,7 @@ public class UserControl implements UserUpdate {
 
     }
     private List<Integer> fetchFavoriteList() {
-        DataStatement<List<Integer>> st = new DataStatement<>() {
+        DataRequest<List<Integer>> st = new DataRequest<>() {
             @Override
             protected List<Integer> call() throws Exception {
                 List<Integer> res = new ArrayList<>();
@@ -142,7 +142,7 @@ public class UserControl implements UserUpdate {
                             res.setSDT(userInDatabase.getSDT());
                             //debug
                             System.out.println("user infor change, update ");
-                            DataStatement<Void> updateSt = new DataStatement<>() {
+                            DataRequest<Void> updateSt = new DataRequest<>() {
 
                                 @Override
                                 protected Void call() throws SQLException  {
@@ -175,7 +175,7 @@ public class UserControl implements UserUpdate {
                         //generate new cookies, add to database
                         res.setSDT("");
                         res.setCookies(generateCookies());
-                        DataStatement<Void> updateSt = new DataStatement<>() {
+                        DataRequest<Void> updateSt = new DataRequest<>() {
 
                             @Override
                             protected Void call() throws SQLException {
@@ -251,7 +251,7 @@ public class UserControl implements UserUpdate {
                 int index = rand.nextInt(CHAR_PATTERN.length());
                 sb.append(CHAR_PATTERN.charAt(index));
             }
-            DataStatement<Boolean> st = new DataStatement<Boolean>() {
+            DataRequest<Boolean> st = new DataRequest<Boolean>() {
 
                 @Override
                 protected Boolean call() throws SQLException {
@@ -285,7 +285,7 @@ public class UserControl implements UserUpdate {
  
     private User checkUserExistance(User user) {
         String userID = user.getUserID();
-        DataStatement<User> st = new DataStatement<>() {
+        DataRequest<User> st = new DataRequest<>() {
 
             @Override
             protected User call() throws Exception {
@@ -332,8 +332,8 @@ public class UserControl implements UserUpdate {
                         });
                         continue;
                     }
-                    if (tab.getContent() instanceof UserUpdate) {
-                        UserUpdate  t = (UserUpdate) tab.getContent();
+                    if (tab.getContent() instanceof LoginUpdate) {
+                        LoginUpdate  t = (LoginUpdate) tab.getContent();
                         Platform.runLater(() -> {
                             t.update(hasLogged);
                         });

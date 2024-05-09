@@ -27,7 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class SearchView extends ScrollPane implements UserUpdate{
+public class SearchView extends ScrollPane implements LoginUpdate{
     private SearchBar searchBar;
     private SearchViewModel searchViewModel;
     private SimpleBooleanProperty housesChanged;
@@ -99,14 +99,14 @@ public class SearchView extends ScrollPane implements UserUpdate{
         housesChanged.addListener((obs, old, neww) -> {
             if (neww) {
                 System.out.println("update");
-                this.update();
+                this.updateView();
             }
         });
     }
     public SearchBar getSearchBar() {
         return searchBar;
     }
-    public void update() {
+    public void updateView() {
         this.setVvalue(0);
         List<House> houses = searchViewModel.getHouses();
         container.getChildren().retainAll(textResult, totalText, pg);
@@ -130,7 +130,7 @@ public class SearchView extends ScrollPane implements UserUpdate{
                             return null;
                         } else {
                             final int j = i;
-                            listHousesContainer.get(i).update(houses.get(i));
+                            listHousesContainer.get(i).updateNewHouse(houses.get(i));
                             Platform.runLater(() -> {
                                 // container.getChildren().add(listHousesContainer.get(j));
                                 container.getChildren().add(j + 2, listHousesContainer.get(j));

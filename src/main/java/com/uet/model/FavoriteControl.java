@@ -57,7 +57,7 @@ public class FavoriteControl {
     }
     public void updateToRemote() {
         if (!addList.isEmpty()) {
-            DataStatement<Void> addTask = new DataStatement<>() {
+            DataRequest<Void> addTask = new DataRequest<>() {
 
                 @Override
                 protected Void call() throws Exception {
@@ -92,7 +92,7 @@ public class FavoriteControl {
             }
         }
         if (!removeList.isEmpty()) {
-            DataStatement<Void> removeTask = new DataStatement<>() {
+            DataRequest<Void> removeTask = new DataRequest<>() {
 
                 @Override
                 protected Void call() throws Exception {

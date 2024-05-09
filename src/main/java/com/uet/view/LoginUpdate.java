@@ -1,5 +1,5 @@
 package com.uet.view;
 
-public interface UserUpdate {
+public interface LoginUpdate {
     void update(boolean isLogged);
 }

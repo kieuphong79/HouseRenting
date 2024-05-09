@@ -10,7 +10,6 @@ import org.kordamp.ikonli.material2.Material2OutlinedMZ;
 
 import com.uet.App;
 import com.uet.exception.LogoutErrorException;
-import com.uet.model.GoogleOauthLogin;
 import com.uet.model.UserControl;
 
 import atlantafx.base.controls.Message;
@@ -23,15 +22,11 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -41,10 +36,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-public class BaseView extends StackPane implements UserUpdate{
+public class BaseView extends StackPane implements LoginUpdate{
     private static BaseView singleton;
     public static BaseView getInstance() {
         if (singleton == null) {
@@ -61,7 +55,7 @@ public class BaseView extends StackPane implements UserUpdate{
    //user independent 
     private HBox rightHeader;
 
-    public BaseView() {
+    private BaseView() {
         //initialize
         super();
         System.out.println("BaseView init");
