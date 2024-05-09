@@ -1,11 +1,8 @@
 package com.uet.model;
-// lic House(int id, String userName, String title, int price, String descirption, Address specAddress, int numBedrooms,
-//             int numKitchens, int numToilets, float area, String imagesUrl, HouseType houseType, int isPublic, Date date) {
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.google.api.client.auth.oauth2.DataStoreCredentialRefreshListener;
 
 public class House {
     public static House getHouseFromResultSet(ResultSet rs) throws SQLException {
@@ -85,9 +82,9 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
     public float getArea() {
         return area;
     }
-    public String getUserID() {
-        return userID;
-    }
+    // public String getUserID() {
+    //     return userID;
+    // }
     public int getIsPublic() {
         return isPublic;
     }

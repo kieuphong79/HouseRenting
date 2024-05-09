@@ -9,7 +9,6 @@ import org.kordamp.ikonli.material2.Material2MZ;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
 
 import com.uet.App;
-import com.uet.model.DataRequest;
 import com.uet.model.FavoriteControl;
 import com.uet.model.House;
 import com.uet.model.User;
@@ -139,34 +138,11 @@ public class HouseView extends ScrollPane implements LoginUpdate{
         Card card = new Card();
         card.setMinHeight(300);
         card.setMaxHeight(300);
-        DataRequest<User> ds = new DataRequest<User>() {
-
-            @Override
-            protected User call() throws Exception {
-                String sql = "Select * from users where userID = ?;";
-                var pst = this.createPreparedStatement(sql);
-                pst.setString(1, curHouse.getUserID());
-                var rs = pst.executeQuery();
-                while (rs.next()) {
-                    var user = User.getUserFromResultSet(rs);
-                    return user;
-                }
-                throw new SQLException();
-            }
-        };
-        
-        User user = null;
-        try { 
-           user = ds.startInMainThread();
-        } catch (Exception e) {
-            BaseView.getInstance().createMessage("Danger", "Không thể kết nối tới database");
-            return new Card();
-        }
-        final User user2 = user;
+        User user = curHouse.getUser();
         card.setHeader(new Tile(user.getName(), user.getEmail(), new ImageView(user.getPictureURL())));
         card.setSubHeader(new Text(user.getSDT()));
         card.setOnMouseClicked(e -> {
-            ContentManagement.getInstance().addContent(new UserView(user2, false), "Người dùng: " + user2.getName(), new FontIcon(Material2AL.ACCOUNT_CIRCLE));
+            ContentManagement.getInstance().addContent(new UserView(user, false), "Người dùng: " + user.getName(), new FontIcon(Material2AL.ACCOUNT_CIRCLE));
             e.consume();
         });
         return card;

@@ -14,9 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeTokenRequest;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -33,10 +31,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.uet.App;
 import com.uet.exception.LoginErrorException;
-import com.uet.threads.MultiThread;
 
-import javafx.concurrent.Task;
-import javafx.concurrent.Worker;
 
 public class GoogleOauthLogin {
     
