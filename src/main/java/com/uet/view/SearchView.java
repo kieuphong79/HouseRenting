@@ -23,11 +23,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class SearchView extends ScrollPane implements LoginUpdate{
+public class SearchView extends VBox implements LoginUpdate {
     private SearchBar searchBar;
     private SearchViewModel searchViewModel;
     private SimpleBooleanProperty housesChanged;
@@ -37,12 +36,14 @@ public class SearchView extends ScrollPane implements LoginUpdate{
     private Button resetButton;
     private Text totalText;
     private Pagination pg;
+    private ScrollPane scroll;
 
     //user independent component
     private List<HouseOverview> listHousesContainer;
 
     public SearchView() {
         super();
+        scroll = new ScrollPane();
         searchBar = new SearchBar();
         searchViewModel = new SearchViewModel();
         searchBar.setOnSearchButton(searchViewModel);
@@ -83,7 +84,7 @@ public class SearchView extends ScrollPane implements LoginUpdate{
         });
         
         container = new VBox();
-        this.setContent(container);
+        scroll.setContent(container);
         container.setPadding(new Insets(30, 0, 10, 30));
         container.setSpacing(20);
         container.getChildren().addAll(textResult, totalText, pg);
@@ -93,6 +94,7 @@ public class SearchView extends ScrollPane implements LoginUpdate{
             listHousesContainer.add(new HouseOverview());
         }
         // container.getChildren().addAll(listHousesContainer);
+        this.getChildren().addAll(searchBar, scroll);
         //bind
         housesChanged.bind(searchViewModel.housesChangedProperty());
         System.out.println("binded");
@@ -107,7 +109,7 @@ public class SearchView extends ScrollPane implements LoginUpdate{
         return searchBar;
     }
     public void updateView() {
-        this.setVvalue(0);
+        scroll.setVvalue(0);
         List<House> houses = searchViewModel.getHouses();
         container.getChildren().retainAll(textResult, totalText, pg);
         textResult.setText(searchViewModel.getSearchInformation());

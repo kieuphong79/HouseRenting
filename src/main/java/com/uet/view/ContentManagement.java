@@ -35,7 +35,7 @@ public class ContentManagement extends TabPane {
         SearchParameter t = new SearchParameter(searchView.getSearchBar().getSearchBarViewModel());
         searchViewModel.setSearchParameter(t);
         searchViewModel.search();
-        Tab searchTab = new Tab("Tìm kiếm", new VBox(searchView.getSearchBar(), searchView));
+        Tab searchTab = new Tab("Tìm kiếm", searchView);
         FontIcon si = new FontIcon(Material2MZ.SEARCH);
         si.setIconSize(20);
         searchTab.setGraphic(si);

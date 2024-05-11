@@ -21,6 +21,7 @@ public class FavoriteControl {
 
     }
     public void addFavoriteList(List<Integer> ids) {
+        if (favoriteList != null) this.updateToRemote();
         favoriteList.clear();
         addList.clear();
         removeList.clear();

@@ -1,22 +1,17 @@
 package com.uet.viewmodel;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.mysql.cj.conf.BooleanProperty;
 import com.uet.model.AddressProperty;
 import com.uet.model.DataRequest;
-import com.uet.model.House;
 import com.uet.model.HouseType;
 import com.uet.view.BaseView;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

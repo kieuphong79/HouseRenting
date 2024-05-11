@@ -14,13 +14,11 @@ public class FavoriteViewModel {
     private List<House> list;
     public FavoriteViewModel() {
         list = new ArrayList<>();
-        fetchFavorite();
+        fethcFavoriteHouses();
     }
     public List<House> getList() {return list;}
-    public static void main(String[] args) {
-
-    }
-    private void fetchFavorite() {
+   
+    private void fethcFavoriteHouses() {
         if (!FavoriteControl.getInstance().getIDs().isEmpty()) {
 
             DataRequest<Void> st = new DataRequest<Void>() {

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
 import com.google.api.client.util.store.DataStore;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.uet.exception.CookiesErrorException;
@@ -17,13 +16,15 @@ import com.uet.exception.LoginErrorException;
 import com.uet.exception.LogoutErrorException;
 import com.uet.threads.MultiThread;
 import com.uet.view.BaseView;
-import com.uet.view.ContentManagement;
-import com.uet.view.FavoriteView;
+import com.uet.view.ContentManagement; //not
+import com.uet.view.FavoriteView; //not
 import com.uet.view.LoginUpdate;
-import com.uet.view.UserView;
+import com.uet.view.SearchView;
+import com.uet.view.UserView; // not
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.scene.control.Tab;
 
 public class UserControl implements LoginUpdate {
     private static final String DATA_STORE_DIR = System.getProperty("user.home") + File.separator + ".houserenting";
@@ -321,11 +322,9 @@ public class UserControl implements LoginUpdate {
                 Platform.runLater(() -> {
                     BaseView.getInstance().update(hasLogged);
                 });
-                System.out.println(2);
                 var temp = ContentManagement.getInstance().getTabs();
-                System.out.println(3);
                 for (int i = 0; i < temp.size(); i++) {
-                    var tab = temp.get(i);
+                    Tab tab = temp.get(i);
                     if (!hasLogged && (tab.getContent() instanceof FavoriteView || tab.getContent() instanceof UserView)) {
                         Platform.runLater(() -> {
                             temp.remove(tab);
@@ -333,6 +332,7 @@ public class UserControl implements LoginUpdate {
                         continue;
                     }
                     if (tab.getContent() instanceof LoginUpdate) {
+                        System.out.println(tab.getContent());
                         LoginUpdate  t = (LoginUpdate) tab.getContent();
                         Platform.runLater(() -> {
                             t.update(hasLogged);
@@ -350,6 +350,9 @@ public class UserControl implements LoginUpdate {
             System.out.println("succes");
         });
         BaseView.getInstance().getProgressBar().progressProperty().bind(updateTask.progressProperty());
+        updateTask.setOnFailed(e -> {
+            System.out.println(updateTask.getException());
+        });
         MultiThread.execute(updateTask);
     }
    
