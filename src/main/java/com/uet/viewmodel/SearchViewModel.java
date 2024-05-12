@@ -11,6 +11,7 @@ import com.uet.model.House;
 import com.uet.model.HouseType;
 import com.uet.model.SearchParameter;
 import com.uet.view.BaseView;
+import com.uet.view.SearchBar;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,6 +23,7 @@ public class SearchViewModel {
     private int limit;
     private int total;
     private SearchParameter curParameter;
+    private SearchBar searchBar;
     
     public SearchViewModel() {
         houses = new ArrayList<>();
@@ -34,9 +36,9 @@ public class SearchViewModel {
     public List<House> getHouses() {return houses;}
 
     public SimpleBooleanProperty housesChangedProperty() {return housesChanged;}
+    public void setSearchBar(SearchBar t) {searchBar = t;}
 
     public void search() {
-        houses.clear();
         housesChanged.set(false);
         DataRequest<Void> st = new DataRequest<Void>() {
             @Override
@@ -182,11 +184,13 @@ public class SearchViewModel {
                 // //debug
             }
         };
+        houses.clear();
         st.setOnSucceeded(e -> {
             housesChanged.set(true);
         });
+        // ma 1
         System.out.println("start thread");
-        st.startInThread();
+        st.startInThread(searchBar);
         // st.execute();
         return;
     }

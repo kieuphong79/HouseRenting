@@ -235,6 +235,8 @@ public class UserControl implements LoginUpdate {
     public void logout() throws LogoutErrorException {
         try {
             dataStore.delete(DATA_STORE_USER);
+            favoriteControl.updateToRemote();
+            
         } catch (IOException e) {
             throw new LogoutErrorException("Lỗi xóa cookies");
         }

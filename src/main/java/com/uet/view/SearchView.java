@@ -26,6 +26,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+
 public class SearchView extends VBox implements LoginUpdate {
     private SearchBar searchBar;
     private SearchViewModel searchViewModel;
@@ -46,6 +47,7 @@ public class SearchView extends VBox implements LoginUpdate {
         scroll = new ScrollPane();
         searchBar = new SearchBar();
         searchViewModel = new SearchViewModel();
+        searchViewModel.setSearchBar(searchBar);
         searchBar.setOnSearchButton(searchViewModel);
         housesChanged = new SimpleBooleanProperty(false);
         
@@ -129,6 +131,7 @@ public class SearchView extends VBox implements LoginUpdate {
                 try {
                     for (int i = 0; i < searchViewModel.getLimit(); i++) {
                         if (i > houses.size() - 1) {
+                            updateProgress(1, 1);
                             return null;
                         } else {
                             final int j = i;
@@ -138,10 +141,12 @@ public class SearchView extends VBox implements LoginUpdate {
                                 container.getChildren().add(j + 2, listHousesContainer.get(j));
                             });
                         }
+                        updateProgress(i, searchViewModel.getLimit());
                     }
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
+                updateProgress(1, 1);
                 return null;
             }
             
@@ -149,6 +154,9 @@ public class SearchView extends VBox implements LoginUpdate {
         // task.setOnSucceeded(e -> {
         //     container.getChildren().add(pg);
         // });
+        BaseView.getInstance().getProgressBar().setNode(searchBar);
+        BaseView.getInstance().getProgressBar().progressProperty().bind(task.progressProperty());
+        //ma 1
         MultiThread.execute(task);
         System.out.println("update succesfully");
     }

@@ -86,6 +86,7 @@ public class FavoriteControl {
             };
             try {
                 addTask.startInMainThread();
+                addList.clear();
             } catch (Exception e) {
                 //ko co gi de bat
                 throw new RuntimeException("lỗi truy vấn favorite control");
@@ -121,6 +122,7 @@ public class FavoriteControl {
             };
             try {
                 removeTask.startInMainThread();
+                removeList.clear();
             } catch (Exception e) {
                 //ko co gi de bat
                 throw new RuntimeException("lỗi truy vấn favorite control");

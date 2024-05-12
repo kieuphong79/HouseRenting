@@ -8,6 +8,7 @@ import com.uet.threads.MultiThread;
 import com.uet.view.BaseView;
 
 import javafx.concurrent.Task;
+import javafx.scene.Node;
 
 
 public abstract class DataRequest<T> extends Task<T> {
@@ -21,9 +22,15 @@ public abstract class DataRequest<T> extends Task<T> {
         return this.call();
     }
 
+    //ma 1
     public void startInThread() {
         BaseView.getInstance().getProgressBar().progressProperty().bind(this.progressProperty());
         MultiThread.execute(this);
-    }//dsada
+    }
+    public void startInThread(Node node) {
+        BaseView.getInstance().getProgressBar().setNode(node);
+        BaseView.getInstance().getProgressBar().progressProperty().bind(this.progressProperty());
+        MultiThread.execute(this);
+    }
 
 }

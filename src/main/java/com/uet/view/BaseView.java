@@ -22,6 +22,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -50,7 +51,7 @@ public class BaseView extends StackPane implements LoginUpdate{
     private VBox baseContainer ;
     private ContentManagement cm;
     private MenuView menuView; 
-    private ProgressBar progressBar;
+    private ProgressBarT progressBar;
 
    //user independent 
     private HBox rightHeader;
@@ -77,31 +78,22 @@ public class BaseView extends StackPane implements LoginUpdate{
         HBox.setHgrow(rightHeader, Priority.ALWAYS);
         update(UserControl.getInstance().hasLogged());
         //processbar 
-        progressBar = new ProgressBar(0); 
-        progressBar.setMaxWidth(2000);
-        progressBar.getStyleClass().addAll(Styles.SMALL);
-        progressBar.setVisible(false);
-        EventHandler consumer = e -> {
-            if (e.getEventType().equals(MouseEvent.MOUSE_PRESSED) || e.getEventType().equals(MouseEvent.MOUSE_CLICKED)
-            || e.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
-                e.consume();
-                System.out.println("consume pressed mouse event");
-            }
-        };
-        progressBar.progressProperty().addListener((obs, old, neww) -> {
-            System.out.println(old + " " + neww);
-            if ((double) old == 0) {
-                progressBar.setVisible(true);
-                //todo: only contentContainer is block
-                progressBar.getScene().addEventFilter(EventType.ROOT, consumer);
-            }
-            if ((double) neww == 1) {
-                progressBar.getScene().removeEventFilter(EventType.ROOT, consumer);;
-                progressBar.progressProperty().unbind();
-                progressBar.setVisible(false);
-                progressBar.setProgress(0);
-            }
-        });
+        progressBar = new ProgressBarT(); 
+       
+        // progressBar.progressProperty().addListener((obs, old, neww) -> {
+        //     System.out.println(old + " " + neww);
+        //     if ((double) old == 0) {
+        //         progressBar.setVisible(true);
+        //         //todo: only contentContainer is block
+        //         progressBar.getScene().addEventFilter(EventType.ROOT, consumer);
+        //     }
+        //     if ((double) neww == 1) {
+        //         progressBar.getScene().removeEventFilter(EventType.ROOT, consumer);;
+        //         progressBar.progressProperty().unbind();
+        //         progressBar.setVisible(false);
+        //         progressBar.setProgress(0);
+        //     }
+        // });
         //Header Container
         HBox headerContainer = getHeaderContainer(leftHeader, rightHeader);
 
@@ -246,7 +238,7 @@ LIST_ALT));
     }
 
     
-    public ProgressBar getProgressBar() {return progressBar;}
+    public ProgressBarT getProgressBar() {return progressBar;}
     
     public void createMessage(String type, String message) {
         final Message mes = new Message();
@@ -290,6 +282,42 @@ LIST_ALT));
         } else  {
             rightHeader.getChildren().clear();
             rightHeader.getChildren().add(getLogoutRightHeader());
+        }
+    }
+    public static class ProgressBarT extends ProgressBar {
+        private static EventHandler consumer = e -> {
+            if (e.getEventType().equals(MouseEvent.MOUSE_PRESSED) || e.getEventType().equals(MouseEvent.MOUSE_CLICKED)
+            || e.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+                e.consume();
+                System.out.println("consume pressed mouse event");
+            }
+        };;
+        private static EventType type = EventType.ROOT;
+        private Node node;
+        public ProgressBarT () {
+            super();
+            this.setMaxWidth(2000);
+            this.getStyleClass().addAll(Styles.SMALL);
+            this.setVisible(false);
+            this.progressProperty().set(0);
+            node = new Button();
+            this.progressProperty().addListener((obs, old, neww) -> {
+            System.out.println(old + " " + neww);
+            if ((double) old == 0) {
+                this.setVisible(true);
+                //todo: only contentContainer is block
+                node.addEventFilter(EventType.ROOT, consumer);
+            }
+            if ((double) neww == 1) {
+                node.removeEventFilter(EventType.ROOT, consumer);;
+                this.progressProperty().unbind();
+                this.setVisible(false);
+                this.setProgress(0);
+            }
+        });
+        }
+        public void setNode(Node n) {
+            node = n;
         }
     }
    

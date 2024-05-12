@@ -80,46 +80,6 @@ public class GoogleOauthLogin {
         String code = "";
         code = listentToResponse();
         
-        // Task<String> task = new Task<String>() {
-
-        //     @Override
-        //     protected String call() throws Exception {
-        //         // int t = test++;
-        //         String res = listentToResponse();
-        //         // System.out.println(test + " recieve");
-        //         return res;
-        //     }
-            
-        // };
-        // MultiThread.execute(task);
-        // try {
-        //     System.out.println(task.get());
-        // } catch (InterruptedException | ExecutionException e) {
-        //     // TODO Auto-generated catch block
-        //     System.out.println("here");
-        // }
-        // Thread t = new Thread(task);
-        // t.start();
-        // try {
-        //     code = task.get(2, TimeUnit.SECONDS);
-        // } catch (InterruptedException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
-        // } catch (ExecutionException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
-        // } catch (TimeoutException e) {
-        //     System.out.println("time fucking out");
-        //     t.interrupt();
-        //     while (true) {
-        //         System.out.println("thread state : " + t.getState());
-        //         System.out.println("thread interrupt: " + t.isInterrupted());
-        //         if (t.getState().equals(Thread.State.TERMINATED)) break;
-        //     }
-        //     // e.printStackTrace();
-        //     // throw new LoginErrorException("thread time out");
-        // }
-        // return null;
         System.out.println(code);
 
         AuthorizationCodeTokenRequest tokenRequest = flow.newTokenRequest(code).setRedirectUri(REDIRECT_URL);

@@ -9,6 +9,37 @@ public class SearchParameter {
     private Address address;
     private HouseType typeOfHouse;
     private String lowerBoundArea;
+    public void setKeyWord(String keyWord) {
+        this.keyWord = keyWord;
+    }
+
+    public void setUpperBoundPrice(String upperBoundPrice) {
+        this.upperBoundPrice = upperBoundPrice;
+    }
+
+    public void setLowerBoundPrice(String lowerBoundPrice) {
+        this.lowerBoundPrice = lowerBoundPrice;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public void setTypeOfHouse(HouseType typeOfHouse) {
+        this.typeOfHouse = typeOfHouse;
+    }
+
+    public void setLowerBoundArea(String lowerBoundArea) {
+        this.lowerBoundArea = lowerBoundArea;
+    }
+
+    public void setUpperBoundArea(String upperBoundArea) {
+        this.upperBoundArea = upperBoundArea;
+    }
+
+    public void setNumOfBedrooms(String numOfBedrooms) {
+        this.numOfBedrooms = numOfBedrooms;
+    }
     private String upperBoundArea;
     private String numOfBedrooms;
     public SearchParameter(String keyWord, String upperBoundPrice, String lowerBoundPrice, Address address,
