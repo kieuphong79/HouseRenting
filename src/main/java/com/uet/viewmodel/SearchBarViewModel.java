@@ -1,13 +1,17 @@
 package com.uet.viewmodel;
 
+import java.io.IOError;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.json.JSONObject;
+
 import com.uet.model.AddressProperty;
-import com.uet.model.DataRequest;
+import com.uet.model.Request;
 import com.uet.model.HouseType;
 import com.uet.view.BaseView;
 
@@ -85,22 +89,37 @@ public class SearchBarViewModel {
     }
 
     public List<String> getPossibleCity() {
-       DataRequest<List<String>> st = new DataRequest<>() {
+       Request<List<String>> st = new Request<>() {
             @Override
             protected List<String> call() {
                 List<String> res = new LinkedList<>();
                 try {
-                    Statement statement = this.createStatement();
-                    ResultSet resultSet = statement.executeQuery("SELECT DISTINCT city FROM houses where isPublic = 1;");
-                    while (resultSet.next()) {
-                        res.add(resultSet.getString(1));
+                    var sql = "SELECT DISTINCT city FROM houses where isPublic = 1;";
+                    createRequest("query");
+                    createQueryRequest(sql);
+                    sendRequest();
+                    JSONObject response = new JSONObject(receiveResponse());
+                    if (response.getString("type").equals("failure")) {
+
                     }
-                    statement.close();
+                    var data = getDataFromResponse(0, response);
+                    for (int i = 0; i < data.length(); i++) {
+                        JSONObject o = data.getJSONObject(i);
+                        res.add(o.getString("city"));
+                    }
                     return res;
 
-                } catch (SQLException e) {
+                    // Statement statement = this.createStatement();
+                    // ResultSet resultSet = statement.executeQuery("SELECT DISTINCT city FROM houses where isPublic = 1;");
+                    // while (resultSet.next()) {
+                    //     res.add(resultSet.getString(1));
+                    // }
+                    // statement.close();
+                    // return res;
+
+                } catch (Exception e) {
                     //todo seperate: done 
-                    BaseView.getInstance().createMessage("Danger", "Không có kết nối tới Database");
+                    BaseView.getInstance().createMessage("Danger", "Không có kết nối tới server");
                 }
                 return res;
             }
@@ -118,23 +137,37 @@ public class SearchBarViewModel {
         String curCity = address.getCity().get();
         // loi lap trinh ko can bat
         if (curCity.equals("Tất cả")) throw new RuntimeException("Chưa chọn thành phố");
-       DataRequest<List<String>> st = new DataRequest<List<String>>() {
+       Request<List<String>> st = new Request<List<String>>() {
             @Override
             protected List<String> call() {
                 List<String> res = new LinkedList<>();
                 try {
-                    Statement statement = this.createStatement(); 
+                    // Statement statement = this.createStatement(); 
                     String temp = "SELECT DISTINCT district FROM houses WHERE isPublic = 1 and city = '" + curCity + "';";
-                    ResultSet resultSet = statement.executeQuery(temp);
-                    while (resultSet.next()) {
-                        res.add(resultSet.getString(1));
+                    createRequest("query");
+                    createQueryRequest(temp);
+                    sendRequest();
+                    JSONObject response = new JSONObject(receiveResponse());
+                    if (response.getString("type").equals("failure")) {
+
                     }
-                    statement.close();
+
+                    var data = getDataFromResponse(0, response);
+
+                    for (int i = 0; i < data.length(); i++) {
+                        JSONObject o = data.getJSONObject(i);
+                        res.add(o.getString("district"));
+                    }
+                    // ResultSet resultSet = statement.executeQuery(temp);
+                    // while (resultSet.next()) {
+                    //     res.add(resultSet.getString(1));
+                    // }
+                    // statement.close();
                     return res;
 
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     //todo: done
-                    BaseView.getInstance().createMessage("Danger", "Không có kết nối tới Database");
+                    BaseView.getInstance().createMessage("Danger", "Không có kết nối tới server");
                 }
                 return res;
             };
@@ -153,23 +186,38 @@ public class SearchBarViewModel {
         if (curCity.equals("Tất cả")) throw new RuntimeException("Chưa chọn thành phố");
         String curDistrict = address.getDistrict().get();
         if (curDistrict.equals("Tất cả")) throw new RuntimeException("Chưa chọn quận");
-       DataRequest<List<String>> st = new DataRequest<List<String>>() {
+       Request<List<String>> st = new Request<List<String>>() {
             @Override
             protected List<String> call() {
                 List<String> res = new LinkedList<>();
                 try {
-                    Statement statement = this.createStatement();
+                    // Statement statement = this.createStatement();
                     String temp = "SELECT DISTINCT street FROM houses WHERE isPublic = 1 and city = '" + curCity + "' AND district = '" + curDistrict + "';";
-                    ResultSet resultSet = statement.executeQuery(temp);
-                    while (resultSet.next()) {
-                        res.add(resultSet.getString(1));
-                    }
-                    statement.close();
-                    return res;
+                    
+                    createRequest("query");
+                    createQueryRequest(temp);
+                    sendRequest();
+                    JSONObject response = new JSONObject(receiveResponse());
+                    if (response.getString("type").equals("failure")) {
 
-                } catch (SQLException e) {
+                    }
+
+                    var data = getDataFromResponse(0, response);
+
+                    for (int i = 0; i < data.length(); i++) {
+                        JSONObject o = data.getJSONObject(i);
+                        res.add(o.getString("street"));
+                    }
+                    // ResultSet resultSet = statement.executeQuery(temp);
+                    // while (resultSet.next()) {
+                    //     res.add(resultSet.getString(1));
+                    // }
+                    // statement.close();
+                    // return res;
+
+                } catch (Exception e) {
                     //todo: done could be error
-                    BaseView.getInstance().createMessage("Danger", "Không có kết nối tới Database");
+                    BaseView.getInstance().createMessage("Danger", "Không có kết nối tới server");
                 }
                 return res;
                 

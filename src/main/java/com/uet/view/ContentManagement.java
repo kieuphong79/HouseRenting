@@ -12,7 +12,6 @@ import com.uet.model.SearchParameter;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.VBox;
 
 public class ContentManagement extends TabPane {
     public static final int SEARCH_FUNCTION = -1;

@@ -1,8 +1,13 @@
 package com.uet.viewmodel;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.uet.model.DataRequest;
+import org.json.JSONObject;
+
+import com.uet.model.Request;
 import com.uet.model.User;
 import com.uet.threads.MultiThread;
 import com.uet.view.BaseView;
@@ -17,15 +22,25 @@ public class UserViewModel {
     public User getUser() {return user;}
     public boolean isChangeable() {return isChangable;}
     public void updateUserInformation() {
-        DataRequest<Void> st = new DataRequest<Void>() {
+        Request<Void> st = new Request<Void>() {
 
             @Override
-            protected Void call() throws SQLException {
+            protected Void call() throws IOException {
                 var sql = "update users set sdt = ? where userID = ?";
-                var pst = this.createPreparedStatement(sql);
-                pst.setString(1, user.getSDT());
-                pst.setString(2, user.getUserID());
-                int rowsAffected = pst.executeUpdate();
+                List<Object> p = new ArrayList<>();
+                p.add(user.getSDT());
+                p.add(user.getUserID());
+                createRequest("update");
+                createUpdateRequest(sql, p);
+                sendRequest();
+                JSONObject response = new JSONObject(receiveResponse());
+                if (response.getString("type").equals("failure")) {
+
+                }
+                // var pst = this.createPreparedStatement(sql);
+                // pst.setString(1, user.getSDT());
+                // pst.setString(2, user.getUserID());
+                // int rowsAffected = pst.executeUpdate();
                 return null;
             }
             

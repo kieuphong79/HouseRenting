@@ -1,7 +1,10 @@
 package com.uet.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import org.json.JSONObject;
 
 
 public class FavoriteControl {
@@ -55,9 +58,10 @@ public class FavoriteControl {
     public boolean check(int id ) {
         return favoriteList.contains(id) || addList.contains(id);
     }
+    //hasn't tested
     public void updateToRemote() {
         if (!addList.isEmpty()) {
-            DataRequest<Void> addTask = new DataRequest<>() {
+            Request<Void> addTask = new Request<>() {
 
                 @Override
                 protected Void call() throws Exception {
@@ -72,15 +76,26 @@ public class FavoriteControl {
                             sql += ";";
                         }
                     }
-                    int count = 1;
-                    var pst = this.createPreparedStatement(sql);
+                    createRequest("update");
+                    List<Object> p = new ArrayList<>();
+                    // int count = 1;
+                    // var pst = this.createPreparedStatement(sql);
                     for (int i : addList) {
-                        pst.setString(count, userID);
-                        pst.setInt(count + 1, i);
-                        count += 2;
+                        p.add(userID);
+                        p.add(i);
+                        // pst.setString(count, userID);
+                        // pst.setInt(count + 1, i);
+                        // count += 2;
                     }
-                    System.out.println(pst.toString());
-                    int check = pst.executeUpdate();
+                    createUpdateRequest(sql, p);
+                    sendRequest();
+                    JSONObject response = new JSONObject(receiveResponse());
+                    String type = response.getString("type");
+                    if (type.equals("failure")) {
+
+                    }
+                    // System.out.println(pst.toString());
+                    // int check = pst.executeUpdate();
                     return null;
                 }
             };
@@ -93,7 +108,7 @@ public class FavoriteControl {
             }
         }
         if (!removeList.isEmpty()) {
-            DataRequest<Void> removeTask = new DataRequest<>() {
+            Request<Void> removeTask = new Request<>() {
 
                 @Override
                 protected Void call() throws Exception {
@@ -108,15 +123,26 @@ public class FavoriteControl {
                             sql += ");";
                         }
                     }
-                    int count = 2;
-                    var pst = this.createPreparedStatement(sql);
-                    pst.setString(1, userID);
+                    createRequest("update");
+                    List<Object> p = new ArrayList<>();
+                    // int count = 2;
+                    // var pst = this.createPreparedStatement(sql);
+                    // pst.setString(1, userID);
+                    p.add(userID);
                     for (int i : removeList) {
-                        pst.setInt(count, i);
-                        count++;
+                        p.add(i);
+                        // pst.setInt(count, i);
+                        // count++;
                     }
-                    System.out.println(pst.toString());
-                    int check = pst.executeUpdate();
+                    createUpdateRequest(sql, p);
+                    sendRequest();
+                    JSONObject response = new JSONObject(receiveResponse());
+                    String type = response.getString("type");
+                    if (type.equals("failure")) {
+
+                    }
+                    // System.out.println(pst.toString());
+                    // int check = pst.executeUpdate();
                     return null;
                 }
             };

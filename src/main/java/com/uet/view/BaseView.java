@@ -306,10 +306,14 @@ LIST_ALT));
             if ((double) old == 0) {
                 this.setVisible(true);
                 //todo: only contentContainer is block
-                node.addEventFilter(EventType.ROOT, consumer);
+                if (node != null) {
+                    node.addEventFilter(EventType.ROOT, consumer);
+                }
             }
             if ((double) neww == 1) {
-                node.removeEventFilter(EventType.ROOT, consumer);;
+                if (node != null) {
+                    node.removeEventFilter(EventType.ROOT, consumer);;
+                }
                 this.progressProperty().unbind();
                 this.setVisible(false);
                 this.setProgress(0);

@@ -1,11 +1,11 @@
 package com.uet.model;
-import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.json.JSONObject;
 
 
 public class House {
-    public static House getHouseFromResultSet(ResultSet rs) throws SQLException {
+    public static House getHouseFromJSON(JSONObject rs) {
             int id = rs.getInt("id");
             String userID = rs.getString("userID");
             String title = rs.getString("title");
@@ -26,7 +26,7 @@ public class House {
             else if (houseType.equals("APARTMENT")) actualHouseType = HouseType.APARTMENT;
             else if (houseType.equals("HOUSE_LAND")) actualHouseType = HouseType.HOUSE_LAND;
             int isPublic = rs.getInt("isPublic");
-            Date requiringDate = rs.getDate("requiringDate");
+            String requiringDate = rs.getString("requiringDate");
             return new House(id, userID, title, price, description, new Address(address, city, district, street), numberOfBedrooms,
                 numberOfKitchens, numberOfToilets, area, imagesURL, actualHouseType, isPublic, requiringDate);
        
@@ -88,7 +88,7 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
     public int getIsPublic() {
         return isPublic;
     }
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
     public String[] getImagesUrl() {
@@ -112,10 +112,10 @@ type : "HOUSE_LAND" //  APARTMENT, BEDSIT, HOUSE_LAND có 3 loại nhà
     private String[] imagesUrl;
     private HouseType houseType;
     private int isPublic;
-    private Date date;
+    private String date;
     private User user;
     public House(int id, String userName, String title, int price, String descirption, Address specAddress, int numBedrooms,
-            int numKitchens, int numToilets, float area, String imagesUrl, HouseType houseType, int isPublic, Date date) {
+            int numKitchens, int numToilets, float area, String imagesUrl, HouseType houseType, int isPublic, String date) {
         this.id = id;
         this.userID = userName;
         this.title = title;

@@ -1,12 +1,13 @@
 package com.uet.viewmodel;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.uet.model.DataRequest;
+import org.json.JSONObject;
+import org.json.JSONArray;
+
+import com.uet.model.Request;
 import com.uet.model.House;
 import com.uet.model.HouseType;
 import com.uet.model.SearchParameter;
@@ -40,7 +41,7 @@ public class SearchViewModel {
 
     public void search() {
         housesChanged.set(false);
-        DataRequest<Void> st = new DataRequest<Void>() {
+        Request<Void> st = new Request<Void>() {
             @Override
             protected Void call() {
                 // //debug
@@ -140,42 +141,63 @@ public class SearchViewModel {
                 String countSt = temp.toString() + ";";
                 temp.append(" LIMIT ").append(String.valueOf(offset)).append(",").append(limit).append(";");
                 try {
-                    String t = temp.toString();
-                    PreparedStatement pst = createPreparedStatement(t);
-                    System.out.println(pst.toString());
+                    createRequest("query");
+
+                    JSONObject query = new JSONObject();
+                    query.put("sql", temp.toString());
                     if (hasKeyword) {
-                        pst.setString(1, curParameter.getKeyWord());
-                        System.out.println(pst.toString());
+                        // pst.setString(1, curParameter.getKeyWord());
+                        JSONArray pArray = new JSONArray();
+                        pArray.put(curParameter.getKeyWord());
+                        query.put("parameters", pArray);
                     }
-                    int count = 0;
-                    ResultSet resultSet = pst.executeQuery();
-                    while (resultSet.next()) {
-                        houses.add(House.getHouseFromResultSet(resultSet));
-                        count++;
-                        updateProgress(count, limit);
-                    }
-                    pst.close();
-                    PreparedStatement st = createPreparedStatement(countSt.replace("*", "count(*)"));
-                    System.out.println(st.toString());
+                    JSONArray queries = new JSONArray();
+                    queries.put(query);
+
+                    countSt = countSt.replace("*", "count(*)");
+                    var query1 = new JSONObject();
+                    query1.put("sql", countSt);
                     if (hasKeyword) {
-                        st.setString(1, curParameter.getKeyWord());
+                        JSONArray pArray = new JSONArray().put(curParameter.getKeyWord());
+                        query1.put("parameters", pArray);
                     }
-                    ResultSet rs = st.executeQuery();
-                    while(rs.next()) {
-                        total = rs.getInt(1);
+                    queries.put(query1);
+                    getRequest().put("queries", queries);
+
+                    sendRequest();
+
+                    JSONObject response = new JSONObject(receiveResponse());
+                    String type = response.getString("type");
+                    if (type.equals("failure")) {
+
                     }
-                    st.close();
+                    JSONArray result = response.getJSONArray("result");
+                    JSONArray data1 = result.getJSONObject(0).getJSONArray("data");
+                    for (int i = 0; i < data1.length(); i++) {
+                        JSONObject house = data1.getJSONObject(i);
+                        houses.add(House.getHouseFromJSON(house));
+                    }
+                    JSONArray data2 = result.getJSONObject(1).getJSONArray("data");
+                    total = data2.getJSONObject(0).getInt("count(*)");
+                    
                     updateProgress(1, 1);
                     System.out.println("done thread for search");
                     return null;
                 
-                } catch (SQLException e) {
+                } catch (IOException e) {
+                    e.printStackTrace();
                     Platform.runLater(() -> {
-                        BaseView.getInstance().createMessage("Danger", "Không thể kết nối tới database");
+                        BaseView.getInstance().createMessage("Danger", "Không thể kết nối tới server");
                     });
+                    updateProgress(1, 1);
                     System.out.println(e.getMessage());
                     return null;
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    updateProgress(1, 1);
+
                 }
+                return null;
                 // //debug
                 // } catch(Exception e) {
                 //     System.out.println(e.getMessage());

@@ -1,13 +1,16 @@
 package com.uet.model;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.net.ServerSocket;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.google.api.client.util.store.DataStore;
 import com.google.api.client.util.store.FileDataStoreFactory;
@@ -19,7 +22,6 @@ import com.uet.view.BaseView;
 import com.uet.view.ContentManagement; //not
 import com.uet.view.FavoriteView; //not
 import com.uet.view.LoginUpdate;
-import com.uet.view.SearchView;
 import com.uet.view.UserView; // not
 
 import javafx.application.Platform;
@@ -31,6 +33,7 @@ public class UserControl implements LoginUpdate {
     private static final String DATA_STORE_USER = "userCookies";
     private static String CHAR_PATTERN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static int COOKIES_LENGTH = 20;
+    
 
     private static UserControl singleton;
     public static UserControl getInstance() {
@@ -76,46 +79,79 @@ public class UserControl implements LoginUpdate {
         if (storedCookies == null) {
             throw new CookiesErrorException();
         }
-        DataRequest<Void> st = new DataRequest<>() {
+        Request<Void> st = new Request<>() {
             @Override
-            protected Void call() throws SQLException, CookiesErrorException {
+            protected Void call() throws IOException {
                 String sql = "SELECT * FROM users where cookies = ?;";
-                PreparedStatement pst = this.createPreparedStatement(sql);
-                pst.setString(1,storedCookies);
-                ResultSet rs = pst.executeQuery();
-                while(rs.next()) {
-                    currentUser = User.getUserFromResultSet(rs);
-                    pst.close();
-                    return null;
-                }
-                pst.close();
-                throw new CookiesErrorException();
+                createRequest("query");
+                JSONArray queries = new JSONArray();
+                getRequest().put("queries", queries);
+                queries.put(new JSONObject().put("sql", sql).put("parameters", new JSONArray().put(storedCookies)));
+
+                sendRequest();
+
+                JSONObject response = new JSONObject(receiveResponse());
+                String type = response.getString("type");
+                if (type.equals("failure")) {
+
+                } 
+                var res = User.getUserFromJSON(response.getJSONArray("result").getJSONObject(0).getJSONArray("data").getJSONObject(0));
+                currentUser = res;
+                return null;
+                // PreparedStatement pst = this.createPreparedStatement(sql);
+                // pst.setString(1,storedCookies);
+                // ResultSet rs = pst.executeQuery();
+                // while(rs.next()) {
+                //     currentUser = User.getUserFromResultSet(rs);
+                //     pst.close();
+                //     return null;
+                // }
+                // pst.close();
             }
         };
         try {
             st.startInMainThread();
-        } catch (SQLException e) {
-            throw new RuntimeException("Lỗi truy vấn userControl");
+        } catch (IOException e) {
+            BaseView.getInstance().createMessage("Danger", "Không thể đăng nhập");
+            // throw new RuntimeException("Lỗi truy vấn userControl");
         } catch (CookiesErrorException e) {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
     private List<Integer> fetchFavoriteList() {
-        DataRequest<List<Integer>> st = new DataRequest<>() {
+        Request<List<Integer>> st = new Request<>() {
             @Override
-            protected List<Integer> call() throws Exception {
+            protected List<Integer> call() throws IOException  {
                 List<Integer> res = new ArrayList<>();
                 String sql = "Select id from favorite where userID = ?";
-                var pst = this.createPreparedStatement(sql);
-                pst.setString(1, currentUser.getUserID());
-                var rs = pst.executeQuery();
-                while (rs.next()) {
-                    res.add(rs.getInt("id"));
+
+                createRequest("query");
+                JSONArray queries = new JSONArray();
+                getRequest().put("queries", queries);
+                queries.put(new JSONObject().put("sql", sql).put("parameters", new JSONArray().put(currentUser.getUserID())));
+
+                sendRequest();
+
+                JSONObject response = new JSONObject(receiveResponse());
+                String type = response.getString("type");
+                if (type.equals("failure")) {
+
+                } 
+                JSONArray data = response.getJSONArray("result").getJSONObject(0).getJSONArray("data");
+                for (int i = 0; i < data.length(); i++) {
+                    res.add(data.getJSONObject(i).getInt("id"));
                 }
                 return res;
+
+                // var pst = this.createPreparedStatement(sql);
+                // pst.setString(1, currentUser.getUserID());
+                // var rs = pst.executeQuery();
+                // while (rs.next()) {
+                //     res.add(rs.getInt("id"));
+                // }
+                // return res;
             }
         };
         try {
@@ -127,110 +163,181 @@ public class UserControl implements LoginUpdate {
     }
     public void login() {
         System.out.println("start login");
-        var loginOauth = new GoogleOauthLogin();
-        Task<Void> task = new Task<>() {
+        Request<Void> urlRequest = new Request<>() {
 
             @Override
-            protected Void call()  {
-                try {
-                    User userFromLogin = loginOauth.login();
-                    User userInDatabase = checkUserExistance(userFromLogin);
-                    final User res = new User(userFromLogin.getUserID(), userFromLogin.getEmail(), userFromLogin.getName(), userFromLogin.getPictureURL());
-                    if (userInDatabase != null) {
-                        //update information if changed
-                        if (!userFromLogin.halfEquals(userInDatabase)) {
-                            res.setCookies(userInDatabase.getCookies());
-                            res.setSDT(userInDatabase.getSDT());
-                            //debug
-                            System.out.println("user infor change, update ");
-                            DataRequest<Void> updateSt = new DataRequest<>() {
+            protected Void call() {
+                try{
+                    createRequest("init_login"); 
+                    sendRequest();
+                    JSONObject urlResponse = new JSONObject(receiveResponse());
+                    if (urlResponse.getString("type").equals("failure")) {
 
-                                @Override
-                                protected Void call() throws SQLException  {
-                                    String updateSql = "update users set name = ?, pictureURL = ? where userID = ?;";
-                                    var pst = this.createPreparedStatement(updateSql);
-                                    pst.setString(1, userFromLogin.getName());
-                                    pst.setString(2, userFromLogin.getPictureURL());
-                                    pst.setString(3, userFromLogin.getUserID());
-                                    int affectedRows = pst.executeUpdate();
-                                    pst.close();
-                                    return null;
-                                }
-                            };
-                            try {
-                                updateSt.startInMainThread();
-                            } catch (SQLException e) {
-                                Platform.runLater(() -> {
-                                    BaseView.getInstance().createMessage("Danger", "Không có kết nối tới database!");
-                                });
-                            } catch (Exception e) {
-                                //ko co gi de bat
-                                throw new RuntimeException(e.getMessage());
-                            }
-                        } else {
-                            res.setCookies(userInDatabase.getCookies());
-                            res.setSDT(userInDatabase.getSDT());
-                        }
-
-                    } else {
-                        //generate new cookies, add to database
-                        res.setSDT("");
-                        res.setCookies(generateCookies());
-                        DataRequest<Void> updateSt = new DataRequest<>() {
-
-                            @Override
-                            protected Void call() throws SQLException {
-                                String updateSql = "insert into users (userID, email, name, pictureURL, sdt, cookies) values (?, ?, ?, ?, ?, ?);";
-                                var pst = this.createPreparedStatement(updateSql);
-                                pst.setString(1, res.getUserID());
-                                pst.setString(2, res.getEmail());
-                                pst.setString(3, res.getName());
-                                pst.setString(4, res.getPictureURL());
-                                pst.setString(5, res.getSDT());
-                                pst.setString(6, res.getCookies());
-                                int affectedRows = pst.executeUpdate();
-                                pst.close();
-                                return null;
-                            }
-                        };
-                        try {
-                            updateSt.startInMainThread();
-                        } catch (SQLException e) {
-                            Platform.runLater(() -> {
-                                BaseView.getInstance().createMessage("Danger", "Không có kết nối tới database!");
-                            });
-                        } catch (Exception e) {
-                            //ko co gi de bat
-                            throw new RuntimeException(e.getMessage());
-                        }
                     }
-                    //fetch cookies, store locally
-                    dataStore.set(DATA_STORE_USER, res.getCookies());
+                    String url = urlResponse.getString("url");
+                    try {
+                        Desktop.getDesktop().browse(new URI(url));
+                    } catch (Exception e) {
+                        throw new LoginErrorException(e.getMessage());
+                    }
+                    JSONObject response = new JSONObject(receiveResponse());
+                    System.out.println(response);
+                    if (response.getString("type").equals("failure"))  {
+                        throw new LoginErrorException("huy dang nhap");
+                    }
+                    User user = User.getUserFromJSON(response.getJSONObject("user"));
+                    dataStore.set(DATA_STORE_USER, user.getCookies());
                     System.out.println("cookie is stored successfully");
-                    currentUser = res;
+                    currentUser = user;
                     hasLogged = true;
                     return null;
-                } catch (LoginErrorException | IOException e) {
-                    //debug
+                } catch (Exception e) {
                     Platform.runLater(() -> {
-                        BaseView.getInstance().createMessage("Danger", "Lỗi đăng nhập hãy thử đăng nhập lại");
+                        BaseView.getInstance().createMessage("Danger", "Lỗi đăng nhập");
                     });
+                    // e.printStackTrace();
                     currentUser = null;
                     hasLogged = false;
                 }
-                // prevent success state
                 throw new RuntimeException("stop thread");
             }
-            
         };
-        task.setOnSucceeded(e -> {
+        urlRequest.setOnSucceeded(e -> {
             System.out.println("login successfully, update");
             BaseView.getInstance().createMessage("Success", "Đăng nhập thành công");
             favoriteControl.addFavoriteList(fetchFavoriteList());
             update(hasLogged);
         });
-        System.out.println("debu start thread");
-        MultiThread.execute(task);
+        urlRequest.startInThread();
+        // var loginOauth = new GoogleOauthLogin();
+        // Task<Void> task = new Task<>() {
+
+        //     @Override
+        //     protected Void call()  {
+        //         try {
+        //             User userFromLogin = loginOauth.login();
+        //             User userInDatabase = checkUserExistance(userFromLogin);
+        //             final User res = new User(userFromLogin.getUserID(), userFromLogin.getEmail(), userFromLogin.getName(), userFromLogin.getPictureURL());
+        //             if (userInDatabase != null) {
+        //                 //update information if changed
+        //                 if (!userFromLogin.halfEquals(userInDatabase)) {
+        //                     res.setCookies(userInDatabase.getCookies());
+        //                     res.setSDT(userInDatabase.getSDT());
+        //                     //debug
+        //                     System.out.println("user infor change, update ");
+        //                     Request<Void> updateSt = new Request<>() {
+
+        //                         @Override
+        //                         protected Void call() throws IOException {
+        //                             String updateSql = "update users set name = ?, pictureURL = ? where userID = ?;";
+        //                             List<Object> p = new ArrayList<>();
+        //                             p.add(userFromLogin.getName());
+        //                             p.add(userFromLogin.getPictureURL());
+        //                             p.add(userFromLogin.getUserID());
+        //                             // var pst = this.createPreparedStatement(updateSql);
+        //                             // pst.setString(1, userFromLogin.getName());
+        //                             // pst.setString(2, userFromLogin.getPictureURL());
+        //                             // pst.setString(3, userFromLogin.getUserID());
+        //                             createRequest("update");
+        //                             createUpdateRequest(updateSql, p);
+        //                             sendRequest();
+        //                             JSONObject response = new JSONObject(receiveResponse());
+        //                             if (response.getString("type").equals("failure")) {
+                                        
+        //                             }
+        //                             // int affectedRows = pst.executeUpdate();
+        //                             // pst.close();
+        //                             return null;
+        //                         }
+        //                     };
+        //                     try {
+        //                         updateSt.startInMainThread();
+        //                     } catch (IOException e) {
+        //                         Platform.runLater(() -> {
+        //                             BaseView.getInstance().createMessage("Danger", "Không có kết nối tới server");
+        //                         });
+        //                     } catch (Exception e) {
+        //                         //ko co gi de bat
+        //                         throw new RuntimeException(e.getMessage());
+        //                     }
+        //                 } else {
+        //                     res.setCookies(userInDatabase.getCookies());
+        //                     res.setSDT(userInDatabase.getSDT());
+        //                 }
+
+        //             } else {
+        //                 //generate new cookies, add to database
+        //                 res.setSDT("");
+        //                 res.setCookies(generateCookies());
+        //                 Request<Void> updateSt = new Request<>() {
+
+        //                     @Override
+        //                     protected Void call() throws IOException {
+        //                         String updateSql = "insert into users (userID, email, name, pictureURL, sdt, cookies) values (?, ?, ?, ?, ?, ?);";
+        //                         List<Object> p = new ArrayList<>();
+        //                         // var pst = this.createPreparedStatement(updateSql);
+        //                         // pst.setString(1, res.getUserID());
+        //                         // pst.setString(2, res.getEmail());
+        //                         // pst.setString(3, res.getName());
+        //                         // pst.setString(4, res.getPictureURL());
+        //                         // pst.setString(5, res.getSDT());
+        //                         // pst.setString(6, res.getCookies());
+        //                         // int affectedRows = pst.executeUpdate();
+        //                         p.add(res.getUserID());
+        //                         p.add(res.getEmail());
+        //                         p.add(res.getName());
+        //                         p.add(res.getPictureURL());
+        //                         p.add(res.getSDT());
+        //                         p.add(res.getCookies());
+        //                         createRequest("update");
+        //                         createUpdateRequest(updateSql, p);
+        //                         sendRequest();
+        //                         JSONObject response = new JSONObject(receiveResponse());
+        //                         if (response.getString("type").equals("failure")) {
+
+        //                         }
+        //                         // pst.close();
+        //                         return null;
+        //                     }
+        //                 };
+        //                 try {
+        //                     updateSt.startInMainThread();
+        //                 } catch (IOException e) {
+        //                     Platform.runLater(() -> {
+        //                         BaseView.getInstance().createMessage("Danger", "Không có kết nối tới server");
+        //                     });
+        //                 } catch (Exception e) {
+        //                     //ko co gi de bat
+        //                     throw new RuntimeException(e.getMessage());
+        //                 }
+        //             }
+        //             //fetch cookies, store locally
+        //             dataStore.set(DATA_STORE_USER, res.getCookies());
+        //             System.out.println("cookie is stored successfully");
+        //             currentUser = res;
+        //             hasLogged = true;
+        //             return null;
+        //         } catch (LoginErrorException | IOException e) {
+        //             //debug
+        //             Platform.runLater(() -> {
+        //                 BaseView.getInstance().createMessage("Danger", "Lỗi đăng nhập hãy thử đăng nhập lại");
+        //             });
+        //             currentUser = null;
+        //             hasLogged = false;
+        //         }
+        //         // prevent success state
+        //         throw new RuntimeException("stop thread");
+        //     }
+            
+        // };
+        // task.setOnSucceeded(e -> {
+        //     System.out.println("login successfully, update");
+        //     BaseView.getInstance().createMessage("Success", "Đăng nhập thành công");
+        //     favoriteControl.addFavoriteList(fetchFavoriteList());
+        //     update(hasLogged);
+        // });
+        // System.out.println("debu start thread");
+        // MultiThread.execute(task);
     }
     public void logout() throws LogoutErrorException {
         try {
@@ -246,72 +353,98 @@ public class UserControl implements LoginUpdate {
         update(hasLogged);
     }
     
-    private String generateCookies() {
-        while(true) {
-            StringBuilder sb = new StringBuilder();
-            Random rand = new Random();
-            for (int i = 0; i < COOKIES_LENGTH; i++) {
-                int index = rand.nextInt(CHAR_PATTERN.length());
-                sb.append(CHAR_PATTERN.charAt(index));
-            }
-            DataRequest<Boolean> st = new DataRequest<Boolean>() {
+    // private String generateCookies() {
+    //     while(true) {
+    //         StringBuilder sb = new StringBuilder();
+    //         Random rand = new Random();
+    //         for (int i = 0; i < COOKIES_LENGTH; i++) {
+    //             int index = rand.nextInt(CHAR_PATTERN.length());
+    //             sb.append(CHAR_PATTERN.charAt(index));
+    //         }
+    //         // hasn't tested
+    //         Request<Boolean> st = new Request<Boolean>() {
 
-                @Override
-                protected Boolean call() throws SQLException {
-                    String sql = "SELECT userID FROM users where cookies = ?;";
-                    PreparedStatement statement = this.createPreparedStatement(sql);
-                    statement.setString(1, sb.toString());
-                    System.out.println(statement.toString());
-                    ResultSet rs = statement.executeQuery();
-                    boolean isHas = false;
-                    while(rs.next()) {
-                        // System.out.println(rs.getString("userID"));
-                        isHas = true;
-                    }
-                    statement.close();
-                    return isHas;
-                }
+    //             @Override
+    //             protected Boolean call() throws IOException {
+    //                 String sql = "SELECT userID FROM users where cookies = ?;";
+    //                 createRequest("query");
+    //                 // getRequest().put("queries", new JSONArray().put(new JSONObject().put("sql", sql).put("parameters", new JSONArray().put(sb.toString()))));
+    //                 ArrayList<Object> parameters = new ArrayList<>();
+    //                 parameters.add(sb.toString());
+    //                 createQueryRequest(sql, parameters);
+    //                 // PreparedStatement statement = this.createPreparedStatement(sql);
+    //                 // statement.setString(1, sb.toString());
+    //                 // System.out.println(statement.toString());
+    //                 // ResultSet rs = statement.executeQuery();
+    //                 sendRequest();
+    //                 JSONObject response = new JSONObject(receiveResponse());
+    //                 String type = response.getString("type");
+    //                 if (type.equals("failure")) {
+
+    //                 }
+    //                 JSONArray data = getDataFromResponse(0, response);
+    //                 return data.length() != 0;
+    //                 // JSONArray data = response.getJSONArray("result").getJSONObject(0).getJSONArray("data");
+    //                 // boolean isHas = false;
+                    
+    //                 // while(rs.next()) {
+    //                 //     // System.out.println(rs.getString("userID"));
+    //                 //     isHas = true;
+    //                 // }
+    //                 // statement.close();
+    //                 // return isHas;
+    //             }
                 
-            };
-            try {
-                if (!st.startInMainThread()) {
-                    System.out.println(sb.toString());
-                    return sb.toString();
-                }
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+    //         };
+    //         try {
+    //             if (!st.startInMainThread()) {
+    //                 System.out.println(sb.toString());
+    //                 return sb.toString();
+    //             }
+    //         } catch (Exception e) {
+    //             //error IO 
+    //             e.printStackTrace();
+    //         }
 
-        }
-    }
+    //     }
+    // }
  
-    private User checkUserExistance(User user) {
-        String userID = user.getUserID();
-        DataRequest<User> st = new DataRequest<>() {
+    // private User checkUserExistance(User user) {
+    //     String userID = user.getUserID();
+    //     //hasn't tested
+    //     Request<User> st = new Request<>() {
 
-            @Override
-            protected User call() throws Exception {
-                var sql = "select * from users where userID = \"" + userID + "\";";
-                var st = this.createStatement(); 
-                var rs = st.executeQuery(sql);
-                while(rs.next()) {
-                    var res = User.getUserFromResultSet(rs);
-                    st.close();
-                    return res;
-                }
-                st.close();
-                return null;
-            }
+    //         @Override
+    //         protected User call() throws Exception {
+    //             var sql = "select * from users where userID = \"" + userID + "\";";
+    //             createRequest("query");
+    //             createQueryRequest(sql);
+
+    //             sendRequest();
+    //             JSONObject response = new JSONObject(receiveResponse());
+
+    //             var data = getDataFromResponse(0, response);
+    //             if (data.length() == 0) return null;
+    //             var res = User.getUserFromJSON(data.getJSONObject(0));
+    //             return res;
+    //             // var st = this.createStatement(); 
+    //             // var rs = st.executeQuery(sql);
+    //             // while(rs.next()) {
+    //             //     var res = User.getUserFromResultSet(rs);
+    //             //     st.close();
+    //             //     return res;
+    //             // }
+    //             // st.close();
+    //         }
             
-        };
-        try {
-            return st.startInMainThread();
-        } catch (Exception e) {
-            //ko co gi de bat
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+    //     };
+    //     try {
+    //         return st.startInMainThread();
+    //     } catch (Exception e) {
+    //         //ko co gi de bat
+    //         throw new RuntimeException(e.getMessage());
+    //     }
+    // }
     public User getCurrentUser() {return currentUser;}
     @Override
     public void update(boolean isLogged) {

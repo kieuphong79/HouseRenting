@@ -1,40 +1,64 @@
 package com.uet.model;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.uet.view.BaseView;
 
 
 public class User {
-    public static User getUserFromResultSet(ResultSet rs) throws SQLException {
+    public static User getUserFromJSON(JSONObject rs)  {
+        var user = new User(rs.getString("userID"), rs.getString("email"), rs.getString("name"), rs.getString("pictureURL"));
+        user.setCookies(rs.getString("cookies"));
+        user.setSDT(rs.getString("sdt"));
+        return user;
+    }
+    public static User getUserFromResultSet(ResultSet rs) throws SQLException  {
         var user = new User(rs.getString("userID"), rs.getString("email"), rs.getString("name"), rs.getString("pictureURL"));
         user.setCookies(rs.getString("cookies"));
         user.setSDT(rs.getString("sdt"));
         return user;
     }
     public static User getUserObject(String userID) {
-        DataRequest<User> task = new DataRequest<>() {
+        Request<User> task = new Request<>() {
 
             @Override
-            protected User call() throws SQLException {
+            protected User call() throws IOException {
                 String sql = "select * from users where userID = ?";
-                var pst = this.createPreparedStatement(sql);
-                pst.setString(1, userID);
-                var rs = pst.executeQuery();
-                while (rs.next()) {
-                    var res = getUserFromResultSet(rs);
-                    pst.close();
-                    return res;
-                }
-                throw new RuntimeException("Loi truy van khong co ket qua");
+                createRequest("query");
+                JSONArray queries = new JSONArray();
+                getRequest().put("queries", queries);
+                queries.put(new JSONObject().put("sql", sql).put("parameters", new JSONArray().put(userID)));
+
+                sendRequest();
+                JSONObject response = new JSONObject(receiveResponse());
+                String type = response.getString("type");
+                if (type.equals("failure")) {
+
+                } 
+                var res = getUserFromJSON(response.getJSONArray("result").getJSONObject(0).getJSONArray("data").getJSONObject(0));
+                return res;
+                
+                // var pst = this.createPreparedStatement(sql);
+                // pst.setString(1, userID);
+                // var rs = pst.executeQuery();
+                // while (rs.next()) {
+                //     var res = getUserFromResultSet(rs);
+                //     pst.close();
+                //     return res;
+                // }
             }
             
         };
         try {
             return task.startInMainThread();
-        } catch (SQLException e) {
-            BaseView.getInstance().createMessage("Danger", "Không thể kết nối tới database");
+        } catch (IOException e) {
+            BaseView.getInstance().createMessage("Danger", "Không thể kết nối tới server");
         } catch (Exception e) {
             //ko co gi de bat
             throw new RuntimeException(e.getMessage());
